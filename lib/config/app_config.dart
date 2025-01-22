@@ -1,12 +1,3 @@
-class AppDev {
-  static const String BASE_URL = "https://uat-core.vgps.vn/api/";
-  static const String SOCKET = "https://vgps.vn";
-  static const String WEB_SOCKET_LOCAL = "https://vgps.vn/";
-  static const String REPORT_URL = "https://report.vgps.vn/api/v1/";
-  static const String IMAGE_URL = 'https://img.vgps.vn/';
-  static const String IMAGE_URL_TEST = 'http://192.168.1.20:9000/';
-}
-
 class AppConfigs {
   static const String appName = 'VNCSS App';
 
