@@ -4,16 +4,19 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get_it/get_it.dart';
 import '../service/local_database/shared_pref.dart';
 
+import 'package:timezone/timezone.dart' as tz;
+
 
 class NotificationService {
   static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  FlutterLocalNotificationsPlugin();
 
   static Future<void> init() async {
-    const AndroidInitializationSettings androidInitializationSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const AndroidInitializationSettings androidInitializationSettings = AndroidInitializationSettings(
+        '@mipmap/ic_launcher');
 
     final DarwinInitializationSettings iosInitializationSettings =
-        DarwinInitializationSettings(
+    DarwinInitializationSettings(
       notificationCategories: [
         DarwinNotificationCategory(
           'demoCategory',
@@ -54,18 +57,16 @@ class NotificationService {
 
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+        AndroidFlutterLocalNotificationsPlugin>()
         ?.requestNotificationsPermission();
   }
 
-  static Future<void> showInstanceNotification(
-      int id,
-    String title,
-    String content,
-    DateTime time,
-  ) async {
+  static Future<void> showZonedNotification(int id,
+      String title,
+      String content,
+      DateTime time,) async {
     AndroidNotificationDetails androidNotificationDetails =
-        AndroidNotificationDetails(
+    AndroidNotificationDetails(
       'your channel id',
       title,
       channelDescription: 'Android notificaiton',
@@ -89,16 +90,20 @@ class NotificationService {
     DarwinNotificationDetails iosNotificationDetail = DarwinNotificationDetails(
     );
 
+    tz.TZDateTime tzDateTime = tz.TZDateTime.from(time, tz.local);
 
     NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidNotificationDetails,
       iOS: iosNotificationDetail,
     );
-    await flutterLocalNotificationsPlugin.show(
+    await flutterLocalNotificationsPlugin.zonedSchedule(
       id,
       title,
       content,
+      tzDateTime,
       platformChannelSpecifics,
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.wallClockTime,
+      androidScheduleMode: AndroidScheduleMode.exact,
       payload: '{"id": $id, "type": "instance", "otherInfo": "some value"}',
     );
   }
@@ -117,14 +122,14 @@ Future<void> _onBackgroundAction(NotificationResponse response) async {
     print('Parsed Payload: $payloadData');
 
     if (response.actionId == 'Finished') {
-      notes?.list?.replaceRange(response.id!,response.id! + 1, [
+      notes?.list?.replaceRange(response.id!, response.id! + 1, [
         notes!.list![response.id!].copyWith(
           done: true,
         ),
       ]);
       sharedPreferencesIml.saveNote(notes!);
     } else if (response.actionId == 'Unfinished') {
-      notes?.list?.replaceRange(response.id!,response.id! + 1, [
+      notes?.list?.replaceRange(response.id!, response.id! + 1, [
         notes!.list![response.id!].copyWith(
           done: false,
         ),

@@ -1,6 +1,3 @@
-import 'dart:async';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -81,10 +78,15 @@ class _ListPageState extends State<ListPage> with TickerProviderStateMixin {
     super.initState();
   }
 
+  final overlay = navigatorKey.currentState?.overlay;
+
+  bool _isOverlayVisible = false;
+
   void insertOverLay() {
-    final overlay = navigatorKey.currentState?.overlay;
-    if (overlay != null && !overlayEntry.mounted) {
-      overlay.insert(overlayEntry);
+    if (_isOverlayVisible || overlayEntry.mounted) return;
+    if (overlay != null) {
+      _isOverlayVisible = true;
+      overlay?.insert(overlayEntry);
       _controller.forward();
     }
   }
@@ -93,10 +95,10 @@ class _ListPageState extends State<ListPage> with TickerProviderStateMixin {
     if (overlayEntry.mounted) {
       _controller.reverse().whenComplete(() {
         overlayEntry.remove();
+        _isOverlayVisible = false;
       });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -119,76 +121,89 @@ class _ListPageState extends State<ListPage> with TickerProviderStateMixin {
 
   Widget buildAppBar() {
     return SliverAppBar(
-        automaticallyImplyLeading: true,
-        pinned: false,
-        stretch: false,
-        floating: true,
-        onStretchTrigger: () async {
-          print('stretching');
-        },
-        expandedHeight: 150,
-        stretchTriggerOffset: 150,
-        forceElevated: true,
-        backgroundColor: Colors.teal,
-        flexibleSpace: FlexibleSpaceBar(
-          stretchModes: [
-            StretchMode.fadeTitle,
-          ],
-          title: Text('All notes', style: AppTextStyle.commonText.copyWith(
+      automaticallyImplyLeading: true,
+      pinned: false,
+      stretch: false,
+      floating: true,
+      onStretchTrigger: () async {
+        print('stretching');
+      },
+      expandedHeight: 150,
+      stretchTriggerOffset: 150,
+      forceElevated: true,
+      backgroundColor: Colors.teal,
+      flexibleSpace: FlexibleSpaceBar(
+        stretchModes: [
+          StretchMode.fadeTitle,
+        ],
+        title: Text(
+          'All notes',
+          style: AppTextStyle.commonText.copyWith(
             color: Colors.white,
-          ),),
-          centerTitle: true,
-          collapseMode: CollapseMode.parallax,
-          background: DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [
-                Colors.teal.shade800,
-                Colors.transparent,
-              ], begin: Alignment.bottomCenter, end: Alignment.center),
-            ),
-            position: DecorationPosition.foreground,
-            child: Image.network(
-              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPtQGhl1cdv9aZsiq_4RlmRaSiyxC-VSeLVw&s',
-              fit: BoxFit.cover,
-            ),
           ),
         ),
-      );
+        centerTitle: true,
+        collapseMode: CollapseMode.parallax,
+        background: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(colors: [
+              Colors.teal.shade800,
+              Colors.transparent,
+            ], begin: Alignment.bottomCenter, end: Alignment.center),
+          ),
+          position: DecorationPosition.foreground,
+          child: Image.network(
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPtQGhl1cdv9aZsiq_4RlmRaSiyxC-VSeLVw&s',
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+    );
   }
 
   Widget buildContent() {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              return Stack(
+        (context, index) {
+          return Stack(
             children: [
-              (noteDetails.list != null) ? Padding(
-                padding: EdgeInsets.only(bottom: 8.h, left: 8.w, right: 8.w, top: 8.h),
-                child: LongPressDraggable(
-                  onDragEnd: (_) {
-                    removeOverLay();
-                    if (overlayEntry.mounted) {
-                      _deleteItem(index);
-                    }
-                  },
-                  onDragUpdate: (detail) {
-                    if (detail.globalPosition.dx >
-                        MediaQuery.of(context).size.width * 3 / 4) {
-                      insertOverLay();
-                    }
-                    if (detail.globalPosition.dx <
-                        MediaQuery.of(context).size.width * 1 / 2) {
-                      removeOverLay();
-                    }
-                  },
-                  childWhenDragging: buildItem(note: noteDetails.list![index], index: index,),
-                  feedback: buildItem(note: noteDetails.list![index], index: index, onDrag: true),
-                  child: Hero(
-                    tag: noteDetails.list![index].title ?? UniqueKey(),
-                    child: buildItem(note: noteDetails.list![index],index: index),
-                  ),
-                ),
-              )  : SizedBox(),
+              (noteDetails.list != null)
+                  ? Padding(
+                      padding: EdgeInsets.only(
+                          bottom: 8.h, left: 8.w, right: 8.w, top: 8.h),
+                      child: LongPressDraggable(
+                        onDragEnd: (_) {
+                          removeOverLay();
+                          if (overlayEntry.mounted) {
+                            _deleteItem(index);
+                          }
+                        },
+                        onDragUpdate: (detail) {
+                          if (detail.globalPosition.dx >
+                              MediaQuery.of(context).size.width * 3 / 4) {
+                            insertOverLay();
+                          }
+                          if (detail.globalPosition.dx <
+                              MediaQuery.of(context).size.width * 1 / 2) {
+                            removeOverLay();
+                          }
+                        },
+                        childWhenDragging: buildItem(
+                          note: noteDetails.list![index],
+                          index: index,
+                        ),
+                        feedback: buildItem(
+                            note: noteDetails.list![index],
+                            index: index,
+                            onDrag: true),
+                        child: Hero(
+                          tag: noteDetails.list![index].title ?? UniqueKey(),
+                          child: buildItem(
+                              note: noteDetails.list![index], index: index),
+                        ),
+                      ),
+                    )
+                  : SizedBox(),
             ],
           );
         },
@@ -204,8 +219,10 @@ class _ListPageState extends State<ListPage> with TickerProviderStateMixin {
         Navigator.push(
           context,
           PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => AddEditNote(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                AddEditNote(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
               return ScaleTransition(
                 scale: animation,
                 child: child,
@@ -234,7 +251,8 @@ class _ListPageState extends State<ListPage> with TickerProviderStateMixin {
       color: Colors.transparent,
       child: GestureDetector(
         onTap: () {
-          NotificationService.showInstanceNotification(index, note.title??"_", note.content??"_", note.time!);
+          NotificationService.showZonedNotification(
+              index, note.title ?? "_", note.content ?? "_", note.time!);
         },
         child: Container(
           width: MediaQuery.of(context).size.width,
@@ -245,7 +263,8 @@ class _ListPageState extends State<ListPage> with TickerProviderStateMixin {
             borderRadius: BorderRadius.circular(16.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: onDrag??false ? 0.6 : 0.2),
+                color:
+                    Colors.black.withValues(alpha: onDrag ?? false ? 0.6 : 0.2),
                 blurRadius: 5,
                 offset: Offset(2, 2),
               ),
@@ -302,7 +321,9 @@ class _ListPageState extends State<ListPage> with TickerProviderStateMixin {
                       ),
                       Spacer(),
                       SvgPicture.asset('assets/icon/ic_clock.svg'),
-                      SizedBox(width: 8.w,),
+                      SizedBox(
+                        width: 8.w,
+                      ),
                       Text(
                         DateUtilsFormat.toDateAPIString(
                           note.time ?? DateTime.now(),
@@ -324,8 +345,12 @@ class _ListPageState extends State<ListPage> with TickerProviderStateMixin {
                     Navigator.push(
                       context,
                       PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) => AddEditNote(note: note,),
-                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            AddEditNote(
+                          note: note,
+                        ),
+                        transitionsBuilder:
+                            (context, animation, secondaryAnimation, child) {
                           return FadeTransition(
                             opacity: animation,
                             child: child,
@@ -335,7 +360,8 @@ class _ListPageState extends State<ListPage> with TickerProviderStateMixin {
                     ).then((value) {
                       if (value is NoteDetail) {
                         setState(() {
-                          noteDetails.list!.replaceRange(index, index + 1, [value]);
+                          noteDetails.list!
+                              .replaceRange(index, index + 1, [value]);
                         });
                         sharedPreferencesIml.saveNote(noteDetails);
                       }
@@ -354,12 +380,9 @@ class _ListPageState extends State<ListPage> with TickerProviderStateMixin {
     );
   }
 
-
   void _deleteItem(int index) {
     noteDetails.list!.removeAt(index);
     sharedPreferencesIml.saveNote(noteDetails);
-    setState(() {
-
-    });
+    setState(() {});
   }
 }

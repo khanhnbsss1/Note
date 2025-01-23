@@ -34,7 +34,6 @@ class _AddEditNoteState extends State<AddEditNote> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: Colors.teal,
         title: Text('Edit'),
@@ -43,51 +42,52 @@ class _AddEditNoteState extends State<AddEditNote> {
       ),
       body: Hero(
         tag: widget.note?.title ?? UniqueKey(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            buildRowData(
-              title: 'Title',
-              hintText: 'Enter your title',
-              controller: titleController,
-            ),
-            Divider(
-              indent: 16.w,
-              endIndent: 16.w,
-              thickness: 1,
-              color: Colors.grey.withValues(alpha: 0.2),
-            ),
-            buildRowData(
-              title: 'Date',
-              hintText: 'Pick your date',
-              controller: dateController,
-              readOnly: true,
-              suffixIcon: Icon(
-                Icons.calendar_month,
-                color: Colors.teal,
+        child: Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              buildRowData(
+                title: 'Title',
+                hintText: 'Enter your title',
+                controller: titleController,
               ),
-              onTap: () {
-                pickDate().then((value) {
-                  dateController.text = value ?? "";
-                });
-              },
-            ),
-            Divider(
-              indent: 16.w,
-              endIndent: 16.w,
-              thickness: 1,
-              color: Colors.grey.withValues(alpha: 0.2),
-            ),
-            Expanded(
-              child: buildRowData(
-                title: 'Content',
-                hintText: 'Enter your content',
-                controller: contentController,
-                maxLine: 10,
+              Divider(
+                indent: 16.w,
+                endIndent: 16.w,
+                thickness: 1,
+                color: Colors.grey.withValues(alpha: 0.2),
               ),
-            ),
-          ],
+              buildRowData(
+                title: 'Date',
+                hintText: 'Pick your date',
+                controller: dateController,
+                readOnly: true,
+                suffixIcon: Icon(
+                  Icons.calendar_month,
+                  color: Colors.teal,
+                ),
+                onTap: () {
+                  pickDate().then((value) {
+                    dateController.text = value ?? "";
+                  });
+                },
+              ),
+              Divider(
+                indent: 16.w,
+                endIndent: 16.w,
+                thickness: 1,
+                color: Colors.grey.withValues(alpha: 0.2),
+              ),
+              Expanded(
+                child: buildRowData(
+                  title: 'Content',
+                  hintText: 'Enter your content',
+                  controller: contentController,
+                  maxLine: 10,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
