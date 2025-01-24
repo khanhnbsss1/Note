@@ -6,6 +6,7 @@ import 'package:note/service/local_database/shared_pref.dart';
 
 import 'package:timezone/data/latest.dart' as tz;
 
+import 'note/background_service.dart';
 import 'note/list_page.dart';
 import 'notification/notification_service.dart';
 

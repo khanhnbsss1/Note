@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_it/get_it.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 
 import '../config/app_config.dart';
 import '../main.dart';
@@ -10,6 +11,7 @@ import '../service/local_database/shared_pref.dart';
 import '../style/styles.dart';
 import '../util/date_utils.dart';
 import 'add_edit_note.dart';
+import 'background_service.dart';
 import 'list_note.dart';
 
 class ListPage extends StatefulWidget {
@@ -251,8 +253,9 @@ class _ListPageState extends State<ListPage> with TickerProviderStateMixin {
       color: Colors.transparent,
       child: GestureDetector(
         onTap: () {
-          NotificationService.showZonedNotification(
-              index, note.title ?? "_", note.content ?? "_", note.time!);
+          // NotificationService.showZonedNotification(
+          //     index, note.title ?? "_", note.content ?? "_", note.time!);
+          FlutterBackgroundService().invoke(ServiceKey.pushNotification);
         },
         child: Container(
           width: MediaQuery.of(context).size.width,

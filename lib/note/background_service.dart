@@ -3,6 +3,11 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:get_it/get_it.dart';
+
+import '../notification/notification_service.dart';
+import '../service/local_database/shared_pref.dart';
+import 'list_note.dart';
 
 class ServiceKey {
   static  const pushNotification = "PushNotification";
@@ -53,6 +58,17 @@ void onStart(ServiceInstance service) async {
     service.on('setAsBackground').listen((event) {
       service.setAsBackgroundService();
     });
+
+    service.on(ServiceKey.pushNotification).listen((event) {
+      final listNote = GetIt.instance.get<SharedPreferencesIml>().listNote;
+
+      final listNotes = sharedPreferencesIml.listNote;
+
+      NoteDetail note = listNotes!.list!.first;
+
+      NotificationService.showZonedNotification(0, note.title!, note.content!, note.time!);
+    });
+
   }
 }
 
