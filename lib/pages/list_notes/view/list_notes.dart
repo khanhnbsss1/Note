@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get_it/get_it.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:note/pages/add_edit_node/binding/add_edit_node_binding.dart';
 import 'package:note/pages/list_notes/controller/list_notes_controller.dart';
 
 import '../../../../config/app_config.dart';
 import '../../../../main.dart';
-import '../../../../notification/notification_service.dart';
-import '../../../../service/local_database/shared_pref.dart';
+import '../../../../service/background_service/background_service.dart';
 import '../../../../style/styles.dart';
 import '../../../../util/date_utils.dart';
 import '../../../model/list_note.dart';
 import '../../add_edit_node/view/add_edit_note.dart';
-import '../../../../service/background_service/background_service.dart';
 
 class ListNotes extends GetWidget<ListNotesController> {
   ListNotes({super.key});
