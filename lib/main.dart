@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
+import 'package:note/pages/homepage.dart';
+import 'package:note/route/app_route.dart';
 import 'package:note/service/local_database/shared_pref.dart';
-
+import 'package:get/get.dart';
 import 'package:timezone/data/latest.dart' as tz;
-
-import 'note/background_service.dart';
-import 'note/list_page.dart';
 import 'notification/notification_service.dart';
 
 Future<void> main() async {
@@ -36,27 +35,25 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
-
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       designSize: const Size(393, 830),
       builder: (context, widget) {
         return GestureDetector(
-          onTap: () {
-            FocusScopeNode currentFocus = FocusScope.of(context);
-            if (!currentFocus.hasPrimaryFocus) {
-              currentFocus.unfocus();
-            }
-          },
-          child: MaterialApp(
-            navigatorKey: navigatorKey,
-            debugShowCheckedModeBanner: false,
-            title: 'Note pro',
-            home: ListPage(),
-          ),
-        );
+            onTap: () {
+              FocusScopeNode currentFocus = FocusScope.of(context);
+              if (!currentFocus.hasPrimaryFocus) {
+                currentFocus.unfocus();
+              }
+            },
+            child: GetMaterialApp(
+              navigatorKey: navigatorKey,
+              debugShowCheckedModeBanner: false,
+              title: 'Note pro',
+              home: Homepage(),
+              getPages: AppRoute.routes
+            ));
       },
     );
   }

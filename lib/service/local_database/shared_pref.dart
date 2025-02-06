@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:rate_my_app/rate_my_app.dart';
 
-import '../../note/list_note.dart';
+import '../../model/list_note.dart';
+
 
 
 class SharedPreferencesIml {

@@ -1,39 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:note/pages/add_edit_node/binding/add_edit_node_binding.dart';
+import 'package:note/pages/list_notes/controller/list_notes_controller.dart';
 
-import '../config/app_config.dart';
-import '../main.dart';
-import '../notification/notification_service.dart';
-import '../service/local_database/shared_pref.dart';
-import '../style/styles.dart';
-import '../util/date_utils.dart';
-import 'add_edit_note.dart';
-import 'background_service.dart';
-import 'list_note.dart';
+import '../../../../config/app_config.dart';
+import '../../../../main.dart';
+import '../../../../notification/notification_service.dart';
+import '../../../../service/local_database/shared_pref.dart';
+import '../../../../style/styles.dart';
+import '../../../../util/date_utils.dart';
+import '../../../model/list_note.dart';
+import '../../add_edit_node/view/add_edit_note.dart';
+import '../../../../service/background_service/background_service.dart';
 
-class ListPage extends StatefulWidget {
-  const ListPage({super.key});
+class ListNotes extends GetWidget<ListNotesController> {
+  ListNotes({super.key});
 
-  @override
-  State<ListPage> createState() => _ListPageState();
-}
-
-class _ListPageState extends State<ListPage> with TickerProviderStateMixin {
-  SharedPreferencesIml sharedPreferencesIml = GetIt.instance.get();
-  late ListNote noteDetails;
   late OverlayEntry overlayEntry;
   late AnimationController _controller;
   late Animation<double> _animation;
 
-  @override
   void initState() {
-    _controller = AnimationController(
-      duration: Duration(milliseconds: 100),
-      vsync: this,
-    );
+    controller.onInit();
+    // _controller = AnimationController(
+    //   duration: Duration(milliseconds: 100),
+    //   vsync: this,
+    // );
 
     _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
@@ -75,9 +72,6 @@ class _ListPageState extends State<ListPage> with TickerProviderStateMixin {
         );
       },
     );
-
-    noteDetails = sharedPreferencesIml.listNote ?? ListNote(list: []);
-    super.initState();
   }
 
   final overlay = navigatorKey.currentState?.overlay;
@@ -103,6 +97,9 @@ class _ListPageState extends State<ListPage> with TickerProviderStateMixin {
   }
 
   @override
+  var controller = Get.put(ListNotesController());
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
@@ -111,7 +108,9 @@ class _ListPageState extends State<ListPage> with TickerProviderStateMixin {
             shrinkWrap: true,
             slivers: [
               buildAppBar(),
-              buildContent(),
+              Obx(
+                () => buildContent(),
+              )
             ],
             physics: BouncingScrollPhysics(),
           ),
@@ -169,7 +168,7 @@ class _ListPageState extends State<ListPage> with TickerProviderStateMixin {
         (context, index) {
           return Stack(
             children: [
-              (noteDetails.list != null)
+              (controller.noteDetails.value.list != null)
                   ? Padding(
                       padding: EdgeInsets.only(
                           bottom: 8.h, left: 8.w, right: 8.w, top: 8.h),
@@ -177,7 +176,7 @@ class _ListPageState extends State<ListPage> with TickerProviderStateMixin {
                         onDragEnd: (_) {
                           removeOverLay();
                           if (overlayEntry.mounted) {
-                            _deleteItem(index);
+                            controller.deleteItem(index);
                           }
                         },
                         onDragUpdate: (detail) {
@@ -191,17 +190,20 @@ class _ListPageState extends State<ListPage> with TickerProviderStateMixin {
                           }
                         },
                         childWhenDragging: buildItem(
-                          note: noteDetails.list![index],
+                          note: controller.noteDetails.value.list![index],
                           index: index,
                         ),
                         feedback: buildItem(
-                            note: noteDetails.list![index],
+                            note: controller.noteDetails.value.list![index],
                             index: index,
                             onDrag: true),
                         child: Hero(
-                          tag: noteDetails.list![index].title ?? UniqueKey(),
+                          tag:
+                              controller.noteDetails.value.list![index].title ??
+                                  UniqueKey(),
                           child: buildItem(
-                              note: noteDetails.list![index], index: index),
+                              note: controller.noteDetails.value.list![index],
+                              index: index),
                         ),
                       ),
                     )
@@ -209,7 +211,9 @@ class _ListPageState extends State<ListPage> with TickerProviderStateMixin {
             ],
           );
         },
-        childCount: (noteDetails.list != null) ? noteDetails.list!.length : 1,
+        childCount: (controller.noteDetails.value.list != null)
+            ? controller.noteDetails.value.list!.length
+            : 1,
       ),
     );
   }
@@ -218,25 +222,11 @@ class _ListPageState extends State<ListPage> with TickerProviderStateMixin {
     return FloatingActionButton(
       backgroundColor: Colors.teal.shade500,
       onPressed: () {
-        Navigator.push(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                AddEditNote(),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              return ScaleTransition(
-                scale: animation,
-                child: child,
-              );
-            },
-          ),
-        ).then((value) {
+        Get.to(() => AddEditNote(),
+                binding: AddEditNodeBinding(), transition: Transition.zoom)!
+            .then((value) {
           if (value is NoteDetail) {
-            setState(() {
-              noteDetails.list!.insert(0, value);
-            });
-            sharedPreferencesIml.saveNote(noteDetails);
+            controller.addNote(value);
           }
         });
       },
@@ -258,7 +248,7 @@ class _ListPageState extends State<ListPage> with TickerProviderStateMixin {
           FlutterBackgroundService().invoke(ServiceKey.pushNotification);
         },
         child: Container(
-          width: MediaQuery.of(context).size.width,
+          width: double.infinity,
           padding: EdgeInsets.all(8.0),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -304,15 +294,15 @@ class _ListPageState extends State<ListPage> with TickerProviderStateMixin {
                         activeColor: Colors.teal,
                         value: note.done,
                         onChanged: (value) async {
-                          setState(() {
-                            note.done = value;
-                          });
-                          notes?.list?.replaceRange(index, index + 1, [
-                            notes!.list![index].copyWith(
-                              done: value,
-                            ),
-                          ]);
-                          sharedPreferencesIml.saveNote(notes!);
+                          // setState(() {
+                          //   note.done = value;
+                          // });
+                          // notes?.list?.replaceRange(index, index + 1, [
+                          //   notes!.list![index].copyWith(
+                          //     done: value,
+                          //   ),
+                          // ]);
+                          // sharedPreferencesIml.saveNote(notes!);
                         },
                       ),
                       Text(
@@ -345,28 +335,15 @@ class _ListPageState extends State<ListPage> with TickerProviderStateMixin {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(32),
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            AddEditNote(
-                          note: note,
-                        ),
-                        transitionsBuilder:
-                            (context, animation, secondaryAnimation, child) {
-                          return FadeTransition(
-                            opacity: animation,
-                            child: child,
-                          );
-                        },
-                      ),
-                    ).then((value) {
+                    Get.to(
+                            () => AddEditNote(
+                                  note: note,
+                                ),
+                            binding: AddEditNodeBinding(),
+                            transition: Transition.zoom)!
+                        .then((value) {
                       if (value is NoteDetail) {
-                        setState(() {
-                          noteDetails.list!
-                              .replaceRange(index, index + 1, [value]);
-                        });
-                        sharedPreferencesIml.saveNote(noteDetails);
+                        controller.changeNoteState(index, value);
                       }
                     });
                   },
@@ -381,11 +358,5 @@ class _ListPageState extends State<ListPage> with TickerProviderStateMixin {
         ),
       ),
     );
-  }
-
-  void _deleteItem(int index) {
-    noteDetails.list!.removeAt(index);
-    sharedPreferencesIml.saveNote(noteDetails);
-    setState(() {});
   }
 }

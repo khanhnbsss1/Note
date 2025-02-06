@@ -5,9 +5,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get_it/get_it.dart';
 
-import '../notification/notification_service.dart';
-import '../service/local_database/shared_pref.dart';
-import 'list_note.dart';
+import '../../model/list_note.dart';
+import '../../notification/notification_service.dart';
+import '../local_database/shared_pref.dart';
 
 class ServiceKey {
   static  const pushNotification = "PushNotification";
@@ -68,7 +68,6 @@ void onStart(ServiceInstance service) async {
 
       NotificationService.showZonedNotification(0, note.title!, note.content!, note.time!);
     });
-
   }
 }
 

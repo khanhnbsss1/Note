@@ -1,76 +1,69 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:note/pages/add_edit_node/controller/add_edit_node_controller.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 
-import '../../config/app_config.dart';
-import '../../util/date_utils.dart';
-import '../style/styles.dart';
-import 'list_note.dart';
+import '../../../../config/app_config.dart';
+import '../../../../style/styles.dart';
+import '../../../../util/date_utils.dart';
+import '../../../model/list_note.dart';
+import 'package:get/get.dart';
 
-class AddEditNote extends StatefulWidget {
-  const AddEditNote({super.key, this.note});
+class AddEditNote extends GetWidget<AddEditNodeController> {
+  AddEditNote({super.key, this.note});
 
   final NoteDetail? note;
 
   @override
-  State<AddEditNote> createState() => _AddEditNoteState();
-}
+  AddEditNodeController controller = Get.find();
 
-class _AddEditNoteState extends State<AddEditNote> {
-  TextEditingController titleController = TextEditingController();
-  TextEditingController contentController = TextEditingController();
-  TextEditingController dateController = TextEditingController();
-
-  @override
-  void initState() {
-    titleController.text = widget.note?.title??"";
-    contentController.text = widget.note?.content??"";
-    dateController.text = DateUtilsFormat.toDateAPIString(widget.note?.time??DateTime.now(), format: AppConfigs.dateTimeDisplayFormat1);
-    super.initState();
+  PreferredSizeWidget? appBar() {
+    return AppBar(
+      backgroundColor: Colors.teal,
+      title: Text('Edit'),
+      centerTitle: true,
+      automaticallyImplyLeading: true,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.teal,
-        title: Text('Edit'),
-        centerTitle: true,
-        automaticallyImplyLeading: true,
-      ),
+      appBar: appBar(),
       body: Hero(
-        tag: widget.note?.title ?? UniqueKey(),
+        tag: note?.title ?? UniqueKey(),
         child: Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              buildRowData(
-                title: 'Title',
-                hintText: 'Enter your title',
-                controller: titleController,
-              ),
+              Obx(() => buildRowData(
+                    title: 'Title',
+                    hintText: 'Enter your title',
+                    controller: controller.titleController.value,
+                  )),
               Divider(
                 indent: 16.w,
                 endIndent: 16.w,
                 thickness: 1,
                 color: Colors.grey.withValues(alpha: 0.2),
               ),
-              buildRowData(
-                title: 'Date',
-                hintText: 'Pick your date',
-                controller: dateController,
-                readOnly: true,
-                suffixIcon: Icon(
-                  Icons.calendar_month,
-                  color: Colors.teal,
+              Obx(
+                () => buildRowData(
+                  title: 'Date',
+                  hintText: 'Pick your date',
+                  controller: controller.dateController.value,
+                  readOnly: true,
+                  suffixIcon: Icon(
+                    Icons.calendar_month,
+                    color: Colors.teal,
+                  ),
+                  onTap: () {
+                    pickDate(context).then((value) {
+                      controller.dateController.value.text = value ?? "";
+                    });
+                  },
                 ),
-                onTap: () {
-                  pickDate().then((value) {
-                    dateController.text = value ?? "";
-                  });
-                },
               ),
               Divider(
                 indent: 16.w,
@@ -78,32 +71,39 @@ class _AddEditNoteState extends State<AddEditNote> {
                 thickness: 1,
                 color: Colors.grey.withValues(alpha: 0.2),
               ),
-              Expanded(
-                child: buildRowData(
-                  title: 'Content',
-                  hintText: 'Enter your content',
-                  controller: contentController,
-                  maxLine: 10,
+              Obx(
+                () => Expanded(
+                  child: buildRowData(
+                    title: 'Content',
+                    hintText: 'Enter your content',
+                    controller: controller.contentController.value,
+                    maxLine: 10,
+                  ),
                 ),
               ),
             ],
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.teal,
-        onPressed: () {
-            Navigator.pop(
-              context,
-              NoteDetail(
-                title: titleController.text,
-                content: contentController.text.trim(),
-                time: DateUtilsFormat.fromString(dateController.text, format: AppConfigs.dateTimeDisplayFormat1),
-              ),
-            );
-        },
-        child: Icon(Icons.check_sharp),
-      ),
+      floatingActionButton: floatingButton(context)
+    );
+  }
+
+  Widget floatingButton(BuildContext context) {
+    return FloatingActionButton(
+      backgroundColor: Colors.teal,
+      onPressed: () {
+        Navigator.pop(
+          context,
+          NoteDetail(
+            title: controller.titleController.value.text,
+            content: controller.contentController.value.text.trim(),
+            time: DateUtilsFormat.fromString(controller.dateController.value.text,
+                format: AppConfigs.dateTimeDisplayFormat1),
+          ),
+        );
+      },
+      child: Icon(Icons.check_sharp),
     );
   }
 
@@ -153,7 +153,7 @@ class _AddEditNoteState extends State<AddEditNote> {
     );
   }
 
-  Future<String?> pickDate() async {
+  Future<String?> pickDate(BuildContext context) async {
     DateTime? date = await showOmniDateTimePicker(
       context: context,
       initialDate: DateTime.now(),
