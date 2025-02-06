@@ -19,17 +19,23 @@ class ListNotesController extends GetxController {
   }
 
   void addNote(NoteDetail note) {
-    noteDetails.value.list!.insert(0, note);
+    noteDetails.update((val) {
+      val?.list?.add(note);
+    });
     saveNotes();
   }
 
   void deleteItem(int index) {
-    noteDetails.value.list!.removeAt(index);
+    noteDetails.update((val) {
+      val?.list?.removeAt(index);
+    });
     saveNotes();
   }
 
   void changeNoteState(int index, NoteDetail note) {
-    noteDetails.value.list!.replaceRange(index, index + 1, [note]);
+    noteDetails.update((val) {
+      val?.list?[index] = note;
+    });
     saveNotes();
   }
 }

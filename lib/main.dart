@@ -7,6 +7,7 @@ import 'package:note/route/app_route.dart';
 import 'package:note/service/local_database/shared_pref.dart';
 import 'package:get/get.dart';
 import 'package:timezone/data/latest.dart' as tz;
+import 'bindings/initial_binding.dart';
 import 'notification/notification_service.dart';
 
 Future<void> main() async {
@@ -52,6 +53,7 @@ class _MyAppState extends State<MyApp> {
               debugShowCheckedModeBanner: false,
               title: 'Note pro',
               home: Homepage(),
+              initialBinding: InitialBinding(),
               getPages: AppRoute.routes
             ));
       },

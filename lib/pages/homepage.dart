@@ -32,8 +32,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
           physics: NeverScrollableScrollPhysics(),
           children: [
             ListNotes(),
-            ProfilePage(),
             CalendarPage(),
+            ProfilePage(),
           ],
         ),
         bottomNavigationBar: Theme(

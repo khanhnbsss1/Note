@@ -1,15 +1,19 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:note/pages/profile/controller/profile_controller.dart';
 
-class ProfilePage extends StatefulWidget {
+class ProfilePage extends GetWidget<ProfileController> {
   const ProfilePage({super.key});
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
-}
-
-class _ProfilePageState extends State<ProfilePage> {
-  @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Column(
+      children: [
+        CircleAvatar(
+          child: Icon(Icons.person),
+        )
+      ],
+    );
   }
 }

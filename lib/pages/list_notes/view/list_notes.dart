@@ -7,7 +7,6 @@ import 'package:note/pages/add_edit_node/binding/add_edit_node_binding.dart';
 import 'package:note/pages/list_notes/controller/list_notes_controller.dart';
 
 import '../../../../config/app_config.dart';
-import '../../../../main.dart';
 import '../../../../service/background_service/background_service.dart';
 import '../../../../style/styles.dart';
 import '../../../../util/date_utils.dart';
@@ -15,85 +14,7 @@ import '../../../model/list_note.dart';
 import '../../add_edit_node/view/add_edit_note.dart';
 
 class ListNotes extends GetWidget<ListNotesController> {
-  ListNotes({super.key});
-
-  late OverlayEntry overlayEntry;
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  void initState() {
-    controller.onInit();
-    // _controller = AnimationController(
-    //   duration: Duration(milliseconds: 100),
-    //   vsync: this,
-    // );
-
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-
-    overlayEntry = OverlayEntry(
-      builder: (builder) {
-        return AnimatedBuilder(
-          animation: _animation,
-          builder: (BuildContext context, Widget? child) {
-            return Opacity(
-              opacity: _animation.value,
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.grey.shade500,
-                      Colors.transparent,
-                    ],
-                    begin: Alignment.centerRight,
-                    end: Alignment.center,
-                  ),
-                ),
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Text(
-                      'Delete this item ?',
-                      style: AppTextStyle.heading5.copyWith(
-                        color: Colors.tealAccent,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  final overlay = navigatorKey.currentState?.overlay;
-
-  bool _isOverlayVisible = false;
-
-  void insertOverLay() {
-    if (_isOverlayVisible || overlayEntry.mounted) return;
-    if (overlay != null) {
-      _isOverlayVisible = true;
-      overlay?.insert(overlayEntry);
-      _controller.forward();
-    }
-  }
-
-  void removeOverLay() {
-    if (overlayEntry.mounted) {
-      _controller.reverse().whenComplete(() {
-        overlayEntry.remove();
-        _isOverlayVisible = false;
-      });
-    }
-  }
-
-  @override
-  var controller = Get.put(ListNotesController());
+  const ListNotes({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -169,22 +90,6 @@ class ListNotes extends GetWidget<ListNotesController> {
                       padding: EdgeInsets.only(
                           bottom: 8.h, left: 8.w, right: 8.w, top: 8.h),
                       child: LongPressDraggable(
-                        onDragEnd: (_) {
-                          removeOverLay();
-                          if (overlayEntry.mounted) {
-                            controller.deleteItem(index);
-                          }
-                        },
-                        onDragUpdate: (detail) {
-                          if (detail.globalPosition.dx >
-                              MediaQuery.of(context).size.width * 3 / 4) {
-                            insertOverLay();
-                          }
-                          if (detail.globalPosition.dx <
-                              MediaQuery.of(context).size.width * 1 / 2) {
-                            removeOverLay();
-                          }
-                        },
                         childWhenDragging: buildItem(
                           note: controller.noteDetails.value.list![index],
                           index: index,
@@ -328,25 +233,42 @@ class ListNotes extends GetWidget<ListNotesController> {
               ),
               Align(
                 alignment: Alignment.topRight,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(32),
-                  onTap: () {
-                    Get.to(
-                            () => AddEditNote(
-                                  note: note,
-                                ),
-                            binding: AddEditNodeBinding(),
-                            transition: Transition.zoom)!
-                        .then((value) {
-                      if (value is NoteDetail) {
-                        controller.changeNoteState(index, value);
-                      }
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(Icons.edit_note_sharp),
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    InkWell(
+                      borderRadius: BorderRadius.circular(32),
+                      onTap: () {
+                        Get.to(
+                                () => AddEditNote(
+                                      note: note,
+                                    ),
+                                binding: AddEditNodeBinding(),
+                                transition: Transition.zoom)!
+                            .then((value) {
+                          if (value is NoteDetail) {
+                            controller.changeNoteState(index, value);
+                          }
+                        });
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Icon(Icons.edit_note_sharp),
+                      ),
+                    ),
+                    SizedBox(width: 12,),
+                    InkWell(
+                      borderRadius: BorderRadius.circular(32),
+                      onTap: () {
+                        controller.deleteItem(index);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Icon(Icons.remove_circle_outline_sharp, color: Colors.red, ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
