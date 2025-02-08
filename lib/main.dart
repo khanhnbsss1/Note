@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -19,7 +19,7 @@ Future<void> main() async {
   await initializeBackGroundService();
   Workmanager().initialize(
       callbackDispatcher,
-      isInDebugMode: kDebugMode
+      isInDebugMode: false
   );
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(

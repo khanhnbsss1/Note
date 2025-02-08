@@ -67,8 +67,8 @@ class ListNotesController extends GetxController {
     if (note.time!.millisecondsSinceEpoch - DateTime.now().millisecondsSinceEpoch > 0) {
       Workmanager().registerOneOffTask(simpleDelayedTask, simpleDelayedTask,
           inputData: note.toJson(),
-          // initialDelay: Duration(
-          //     milliseconds: note.time!.millisecondsSinceEpoch - DateTime.now().millisecondsSinceEpoch)
+          initialDelay: Duration(
+              milliseconds: note.time!.millisecondsSinceEpoch - DateTime.now().millisecondsSinceEpoch)
       );
       onUpdateNotificationStatus(index, true);
     }
