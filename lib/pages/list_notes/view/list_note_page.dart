@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:note/pages/add_edit_node/binding/add_edit_node_binding.dart';
 import 'package:note/pages/list_notes/controller/list_notes_controller.dart';
+import 'package:note/service/background_service/work_manager.dart';
+import 'package:workmanager/workmanager.dart';
 
 import '../../../../config/app_config.dart';
-import '../../../../service/background_service/background_service.dart';
 import '../../../../style/styles.dart';
 import '../../../../util/date_utils.dart';
 import '../../../model/list_note.dart';
 import '../../add_edit_node/view/add_edit_note.dart';
 
-class ListNotes extends GetWidget<ListNotesController> {
-  const ListNotes({super.key});
+class ListNotePage extends GetWidget<ListNotesController> {
+  const ListNotePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -99,9 +99,7 @@ class ListNotes extends GetWidget<ListNotesController> {
                             index: index,
                             onDrag: true),
                         child: Hero(
-                          tag:
-                              controller.noteDetails.value.list![index].title ??
-                                  UniqueKey(),
+                          tag: controller.noteDetails.value.list![index].time ?? DateTime.now(),
                           child: buildItem(
                               note: controller.noteDetails.value.list![index],
                               index: index),
@@ -144,9 +142,10 @@ class ListNotes extends GetWidget<ListNotesController> {
       color: Colors.transparent,
       child: GestureDetector(
         onTap: () {
+          controller.notify(index, note);
           // NotificationService.showZonedNotification(
           //     index, note.title ?? "_", note.content ?? "_", note.time!);
-          FlutterBackgroundService().invoke(ServiceKey.pushNotification);
+          // FlutterBackgroundService().invoke(ServiceKey.pushNotification, note.toJson());
         },
         child: Container(
           width: double.infinity,
@@ -195,15 +194,7 @@ class ListNotes extends GetWidget<ListNotesController> {
                         activeColor: Colors.teal,
                         value: note.done,
                         onChanged: (value) async {
-                          // setState(() {
-                          //   note.done = value;
-                          // });
-                          // notes?.list?.replaceRange(index, index + 1, [
-                          //   notes!.list![index].copyWith(
-                          //     done: value,
-                          //   ),
-                          // ]);
-                          // sharedPreferencesIml.saveNote(notes!);
+                          controller.onNoteDone(index, value);
                         },
                       ),
                       Text(
@@ -240,6 +231,17 @@ class ListNotes extends GetWidget<ListNotesController> {
                     InkWell(
                       borderRadius: BorderRadius.circular(32),
                       onTap: () {
+                        controller.notify(index, note);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: note.notificationStatus == NotificationStatus.enable ? Icon(Icons.notifications_active) : Icon(Icons.notifications_none),
+                      ),
+                    ),
+                    SizedBox(width: 12,),
+                    InkWell(
+                      borderRadius: BorderRadius.circular(32),
+                      onTap: () {
                         Get.to(
                                 () => AddEditNote(
                                       note: note,
@@ -248,7 +250,7 @@ class ListNotes extends GetWidget<ListNotesController> {
                                 transition: Transition.zoom)!
                             .then((value) {
                           if (value is NoteDetail) {
-                            controller.changeNoteState(index, value);
+                            controller.editNote(index, value);
                           }
                         });
                       },

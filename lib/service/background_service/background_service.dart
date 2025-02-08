@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'dart:ui';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:get_it/get_it.dart';
-
+import 'package:get/get.dart';
+import 'package:note/pages/list_notes/controller/list_notes_controller.dart';
 import '../../model/list_note.dart';
-import '../../notification/notification_service.dart';
-import '../local_database/shared_pref.dart';
+import '../notification/notification_service.dart';
 
 class ServiceKey {
   static  const pushNotification = "PushNotification";
@@ -60,11 +58,12 @@ void onStart(ServiceInstance service) async {
     });
 
     service.on(ServiceKey.pushNotification).listen((event) {
-      final listNote = GetIt.instance.get<SharedPreferencesIml>().listNote;
+      event;
+      print('');
+      Get.isRegistered<ListNotesController>();
+      ListNotesController controller = Get.find()<ListNotesController>();
 
-      final listNotes = sharedPreferencesIml.listNote;
-
-      NoteDetail note = listNotes!.list!.first;
+      NoteDetail note = controller.noteDetails.value.list!.first;
 
       NotificationService.showZonedNotification(0, note.title!, note.content!, note.time!);
     });

@@ -1,7 +1,9 @@
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
+import 'package:workmanager/workmanager.dart';
 
 import '../../../model/list_note.dart';
+import '../../../service/background_service/work_manager.dart';
 import '../../../service/local_database/shared_pref.dart';
 
 class ListNotesController extends GetxController {
@@ -20,7 +22,7 @@ class ListNotesController extends GetxController {
 
   void addNote(NoteDetail note) {
     noteDetails.update((val) {
-      val?.list?.add(note);
+      val?.list?.insert(0, note);
     });
     saveNotes();
   }
@@ -32,10 +34,43 @@ class ListNotesController extends GetxController {
     saveNotes();
   }
 
-  void changeNoteState(int index, NoteDetail note) {
+  void editNote(int index, NoteDetail note) {
     noteDetails.update((val) {
       val?.list?[index] = note;
     });
     saveNotes();
+  }
+
+  void onNoteDone(int index, bool? value) {
+    noteDetails.value.list?.replaceRange(index, index + 1, [
+      noteDetails.value.list![index].copyWith(
+        done: value,
+      ),
+    ]);
+    noteDetails.refresh();
+    saveNotes();
+  }
+
+  void onUpdateNotificationStatus(int index, bool? value) {
+    noteDetails.value.list?.replaceRange(index, index + 1, [
+      noteDetails.value.list![index].copyWith(
+        notificationStatus: value ?? false
+            ? NotificationStatus.enable
+            : NotificationStatus.disable,
+      ),
+    ]);
+    noteDetails.refresh();
+    saveNotes();
+  }
+
+  void notify(int index, NoteDetail note) {
+    if (note.time!.millisecondsSinceEpoch - DateTime.now().millisecondsSinceEpoch > 0) {
+      Workmanager().registerOneOffTask(simpleDelayedTask, simpleDelayedTask,
+          inputData: note.toJson(),
+          // initialDelay: Duration(
+          //     milliseconds: note.time!.millisecondsSinceEpoch - DateTime.now().millisecondsSinceEpoch)
+      );
+      onUpdateNotificationStatus(index, true);
+    }
   }
 }

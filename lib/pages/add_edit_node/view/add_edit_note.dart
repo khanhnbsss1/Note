@@ -11,12 +11,9 @@ import '../../../model/list_note.dart';
 import 'package:get/get.dart';
 
 class AddEditNote extends GetWidget<AddEditNodeController> {
-  AddEditNote({super.key, this.note});
+  const AddEditNote({super.key, this.note});
 
   final NoteDetail? note;
-
-  @override
-  AddEditNodeController controller = Get.find();
 
   PreferredSizeWidget? appBar() {
     return AppBar(
@@ -29,56 +26,55 @@ class AddEditNote extends GetWidget<AddEditNodeController> {
 
   @override
   Widget build(BuildContext context) {
+    controller.onInitNote(note);
     return Scaffold(
       appBar: appBar(),
       body: Hero(
         tag: note?.title ?? UniqueKey(),
-        child: Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              buildRowData(
-                title: 'Title',
-                hintText: 'Enter your title',
-                controller: controller.titleController.value,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            buildRowData(
+              title: 'Title',
+              hintText: 'Enter your title',
+              controller: controller.titleController.value,
+            ),
+            Divider(
+              indent: 16.w,
+              endIndent: 16.w,
+              thickness: 1,
+              color: Colors.grey.withValues(alpha: 0.2),
+            ),
+            buildRowData(
+              title: 'Date',
+              hintText: 'Pick your date',
+              controller: controller.dateController.value,
+              readOnly: true,
+              suffixIcon: Icon(
+                Icons.calendar_month,
+                color: Colors.teal,
               ),
-              Divider(
-                indent: 16.w,
-                endIndent: 16.w,
-                thickness: 1,
-                color: Colors.grey.withValues(alpha: 0.2),
+              onTap: () {
+                pickDate(context).then((value) {
+                  controller.dateController.value.text = value ?? "";
+                });
+              },
+            ),
+            Divider(
+              indent: 16.w,
+              endIndent: 16.w,
+              thickness: 1,
+              color: Colors.grey.withValues(alpha: 0.2),
+            ),
+            Expanded(
+              child: buildRowData(
+                title: 'Content',
+                hintText: 'Enter your content',
+                controller: controller.contentController.value,
+                maxLine: 10,
               ),
-              buildRowData(
-                title: 'Date',
-                hintText: 'Pick your date',
-                controller: controller.dateController.value,
-                readOnly: true,
-                suffixIcon: Icon(
-                  Icons.calendar_month,
-                  color: Colors.teal,
-                ),
-                onTap: () {
-                  pickDate(context).then((value) {
-                    controller.dateController.value.text = value ?? "";
-                  });
-                },
-              ),
-              Divider(
-                indent: 16.w,
-                endIndent: 16.w,
-                thickness: 1,
-                color: Colors.grey.withValues(alpha: 0.2),
-              ),
-              Expanded(
-                child: buildRowData(
-                  title: 'Content',
-                  hintText: 'Enter your content',
-                  controller: controller.contentController.value,
-                  maxLine: 10,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
       floatingActionButton: floatingButton(context)
@@ -151,7 +147,7 @@ class AddEditNote extends GetWidget<AddEditNodeController> {
   Future<String?> pickDate(BuildContext context) async {
     DateTime? date = await showOmniDateTimePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: note?.time ?? DateTime.now(),
       firstDate: DateTime.now().add(Duration(days: -90)),
       lastDate: DateTime.now().add(Duration(days: 90)),
       is24HourMode: false,

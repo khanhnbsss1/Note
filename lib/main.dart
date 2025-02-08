@@ -1,31 +1,30 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get_it/get_it.dart';
+import 'package:note/injector/injector.dart';
 import 'package:note/pages/homepage.dart';
 import 'package:note/route/app_route.dart';
-import 'package:note/service/local_database/shared_pref.dart';
+import 'package:note/service/background_service/background_service.dart';
 import 'package:get/get.dart';
-import 'package:timezone/data/latest.dart' as tz;
+import 'package:note/service/background_service/work_manager.dart';
+import 'package:note/service/notification/notification_service.dart';
+import 'package:workmanager/workmanager.dart';
 import 'bindings/initial_binding.dart';
-import 'notification/notification_service.dart';
 
 Future<void> main() async {
-  tz.initializeTimeZones();
   WidgetsFlutterBinding.ensureInitialized();
+  await Injector.initDJ();
   await NotificationService.init();
-  initDJ();
+  await initializeBackGroundService();
+  Workmanager().initialize(
+      callbackDispatcher,
+      isInDebugMode: kDebugMode
+  );
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(
     MyApp(),
   );
-}
-
-final locator = GetIt.instance;
-
-Future<void> initDJ() async {
-  locator.registerLazySingleton(() => SharedPreferencesIml());
-  await locator.get<SharedPreferencesIml>().onInit();
 }
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

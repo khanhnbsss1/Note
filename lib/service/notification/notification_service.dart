@@ -2,9 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get_it/get_it.dart';
-import '../service/local_database/shared_pref.dart';
+import '../local_database/shared_pref.dart';
 
-import 'package:timezone/timezone.dart' as tz;
 
 
 class NotificationService {
@@ -90,31 +89,30 @@ class NotificationService {
     DarwinNotificationDetails iosNotificationDetail = DarwinNotificationDetails(
     );
 
-    tz.TZDateTime tzDateTime = tz.TZDateTime.from(time, tz.local);
+    // tz.TZDateTime tzDateTime = tz.TZDateTime.from(time, tz.local);
 
     NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidNotificationDetails,
       iOS: iosNotificationDetail,
     );
-    await flutterLocalNotificationsPlugin.zonedSchedule(
+    await flutterLocalNotificationsPlugin.show(
       id,
       title,
       content,
-      tzDateTime,
       platformChannelSpecifics,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.wallClockTime,
-      androidScheduleMode: AndroidScheduleMode.exact,
+      // uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.wallClockTime,
+      // androidScheduleMode: AndroidScheduleMode.exact,
       payload: '{"id": $id, "type": "instance", "otherInfo": "some value"}',
     );
   }
 }
 
-SharedPreferencesIml sharedPreferencesIml = GetIt.instance.get();
-
-final notes = sharedPreferencesIml.listNote;
 
 @pragma('vm:entry-point')
 Future<void> _onBackgroundAction(NotificationResponse response) async {
+  SharedPreferencesIml sharedPreferencesIml = GetIt.instance.get();
+
+  final notes = sharedPreferencesIml.listNote;
   print('Action ID: ${response.actionId}');
 
   if (response.payload != null) {
@@ -123,7 +121,7 @@ Future<void> _onBackgroundAction(NotificationResponse response) async {
 
     if (response.actionId == 'Finished') {
       notes?.list?.replaceRange(response.id!, response.id! + 1, [
-        notes!.list![response.id!].copyWith(
+        notes.list![response.id!].copyWith(
           done: true,
         ),
       ]);

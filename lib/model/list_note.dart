@@ -1,3 +1,7 @@
+import 'package:flutter/scheduler.dart';
+
+import '../pages/calendar/model/event.dart';
+
 class ListNote {
   List<NoteDetail>? list;
 
@@ -23,9 +27,13 @@ class NoteDetail {
   DateTime? time;
   String? content;
   bool? done;
+  PriorityType? priority;
+  NotificationStatus? notificationStatus;
 
-  NoteDetail({this.title, this.time, this.content, this.done}){
+  NoteDetail({this.title, this.time, this.content, this.done, this.priority, this.notificationStatus,}){
     done ??= false;
+    priority ??= PriorityType.high;
+    notificationStatus ??= NotificationStatus.disable;
   }
 
   Map<String, dynamic> toJson() {
@@ -34,6 +42,8 @@ class NoteDetail {
       'time': time?.toIso8601String(),
       'content': content,
       'done': done,
+      'priority': priority?.label,
+      'notification_status': notificationStatus?.label,
     };
   }
 
@@ -43,6 +53,8 @@ class NoteDetail {
       time: json['time'] != null ? DateTime.parse(json['time']) : null,
       content: json['content'] as String?,
       done: json['done'] as bool?,
+      priority: json['priority'] == 'High' ? PriorityType.high : json['priority'] == 'Medium' ? PriorityType.medium : PriorityType.low,
+      notificationStatus: json['notification_status'] == 'Enable' ? NotificationStatus.enable : NotificationStatus.disable,
     );
   }
 
@@ -51,13 +63,26 @@ class NoteDetail {
     DateTime? time,
     String? content,
     bool? done,
+    PriorityType? priority,
+    NotificationStatus? notificationStatus,
   }) {
-    final NoteDetail note =  NoteDetail(
+    final NoteDetail note = NoteDetail(
       title: title ?? this.title,
       time: time ?? this.time,
       content: content ?? this.content,
       done: done ?? this.done,
+      priority: priority ?? this.priority,
+      notificationStatus: notificationStatus ?? this.notificationStatus,
     );
     return note;
   }
+}
+
+enum NotificationStatus {
+  enable('Enable'),
+  disable('Disable');
+
+  final String? label;
+
+  const NotificationStatus(this.label);
 }

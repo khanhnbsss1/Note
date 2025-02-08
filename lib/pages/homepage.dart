@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:note/pages/list_notes/view/list_notes.dart';
+import 'package:note/pages/list_notes/view/list_note_page.dart';
 import 'package:note/pages/profile/view/profile_page.dart';
 
 import 'calendar/view/calendar.dart';
@@ -31,7 +31,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
           controller: tabController,
           physics: NeverScrollableScrollPhysics(),
           children: [
-            ListNotes(),
+            ListNotePage(),
             CalendarPage(),
             ProfilePage(),
           ],
