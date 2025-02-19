@@ -22,7 +22,7 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
   Animation<double>? _animation;
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
     _controller = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 100),
@@ -32,6 +32,12 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
       parent: _controller!,
       curve: Curves.easeInOut,
     );
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,

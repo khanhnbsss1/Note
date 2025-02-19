@@ -9,15 +9,19 @@ import '../../../service/local_database/shared_pref.dart';
 class ListNotesController extends GetxController {
   SharedPreferencesIml sharedPreferencesIml = GetIt.instance.get();
   var noteDetails = ListNote(list: []).obs;
+  var shownNotes = ListNote(list: []).obs;
+  var listType = TypeList.all.obs;
 
   @override
   void onInit() {
     noteDetails.value = sharedPreferencesIml.listNote ?? ListNote(list: []);
+    shownNotes = noteDetails;
     super.onInit();
   }
 
   void saveNotes() {
     sharedPreferencesIml.saveNote(noteDetails.value);
+    shownNotes = noteDetails;
   }
 
   void addNote(NoteDetail note) {
@@ -64,13 +68,59 @@ class ListNotesController extends GetxController {
   }
 
   void notify(int index, NoteDetail note) {
-    if (note.time!.millisecondsSinceEpoch - DateTime.now().millisecondsSinceEpoch > 0) {
+    if (note.time!.millisecondsSinceEpoch - DateTime
+        .now()
+        .millisecondsSinceEpoch > 0) {
       Workmanager().registerOneOffTask(simpleDelayedTask, simpleDelayedTask,
           inputData: note.toJson(),
           initialDelay: Duration(
-              milliseconds: note.time!.millisecondsSinceEpoch - DateTime.now().millisecondsSinceEpoch)
+              milliseconds: note.time!.millisecondsSinceEpoch - DateTime
+                  .now()
+                  .millisecondsSinceEpoch)
       );
       onUpdateNotificationStatus(index, true);
     }
   }
+
+  void changeTypeList(TypeList type) {
+    listType.value = type;
+    sortNoteDetail();
+  }
+
+  void sortNoteDetail() {
+    onInit();
+    if (listType.value == TypeList.done) {
+      shownNotes.update((val) {
+        val?.list = val.list?.where((e) => e.done == true).toList();
+      });
+    }
+    if (listType.value == TypeList.notDone) {
+      shownNotes.update((val) {
+        val?.list = val.list?.where((e) => e.done == false).toList();
+      });
+    }
+    if (listType.value == TypeList.overdue) {
+      shownNotes.update((val) {
+        val?.list = val.list?.where((e) => !(e.time!.isAfter(DateTime.now()))).toList();
+      });
+    }
+    if (listType.value == TypeList.notOverdue) {
+      shownNotes.update((val) {
+        val?.list = val.list?.where((e) => e.time!.isAfter(DateTime.now())).toList();
+      });
+    }
+  }
+
+}
+
+enum TypeList {
+  done('Done'),
+  notDone('Not done'),
+  overdue('Overdue'),
+  notOverdue('Not overdue'),
+  all('All');
+
+  final String? label;
+
+  const TypeList(this.label);
 }

@@ -4,8 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:note/pages/add_edit_node/binding/add_edit_node_binding.dart';
 import 'package:note/pages/list_notes/controller/list_notes_controller.dart';
-import 'package:note/service/background_service/work_manager.dart';
-import 'package:workmanager/workmanager.dart';
 
 import '../../../../config/app_config.dart';
 import '../../../../style/styles.dart';
@@ -19,19 +17,44 @@ class ListNotePage extends GetWidget<ListNotesController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          CustomScrollView(
-            shrinkWrap: true,
-            slivers: [
-              buildAppBar(),
-              Obx(
-                () => buildContent(),
-              )
-            ],
-            physics: BouncingScrollPhysics(),
+      body: CustomScrollView(
+        shrinkWrap: true,
+        slivers: [
+          buildAppBar(),
+          Obx(
+            () => SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: DropdownMenu<TypeList>(
+                    initialSelection: controller.listType.value,
+                    dropdownMenuEntries: TypeList.values
+                        .map((e) => DropdownMenuEntry<TypeList>(
+                            value: e, label: e.label!))
+                        .toList(),
+                    onSelected: (value) {
+                      if (value != null) {
+                        controller.changeTypeList(value);
+                      }
+                    },
+                    label: Text(
+                      'Ordered by ',
+                      style: AppTextStyle.heading5.copyWith(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
+          Obx(
+            () => buildContent(),
+          )
         ],
+        physics: BouncingScrollPhysics(),
       ),
       floatingActionButton: buildButton(),
     );
@@ -85,23 +108,24 @@ class ListNotePage extends GetWidget<ListNotesController> {
         (context, index) {
           return Stack(
             children: [
-              (controller.noteDetails.value.list != null)
+              (controller.shownNotes.value.list != null)
                   ? Padding(
                       padding: EdgeInsets.only(
                           bottom: 8.h, left: 8.w, right: 8.w, top: 8.h),
                       child: LongPressDraggable(
                         childWhenDragging: buildItem(
-                          note: controller.noteDetails.value.list![index],
+                          note: controller.shownNotes.value.list![index],
                           index: index,
                         ),
                         feedback: buildItem(
-                            note: controller.noteDetails.value.list![index],
+                            note: controller.shownNotes.value.list![index],
                             index: index,
                             onDrag: true),
                         child: Hero(
-                          tag: controller.noteDetails.value.list![index].time ?? DateTime.now(),
+                          tag: controller.shownNotes.value.list![index].time ??
+                              DateTime.now(),
                           child: buildItem(
-                              note: controller.noteDetails.value.list![index],
+                              note: controller.shownNotes.value.list![index],
                               index: index),
                         ),
                       ),
@@ -110,8 +134,8 @@ class ListNotePage extends GetWidget<ListNotesController> {
             ],
           );
         },
-        childCount: (controller.noteDetails.value.list != null)
-            ? controller.noteDetails.value.list!.length
+        childCount: (controller.shownNotes.value.list != null)
+            ? controller.shownNotes.value.list!.length
             : 1,
       ),
     );
@@ -235,10 +259,15 @@ class ListNotePage extends GetWidget<ListNotesController> {
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: note.notificationStatus == NotificationStatus.enable ? Icon(Icons.notifications_active) : Icon(Icons.notifications_none),
+                        child:
+                            note.notificationStatus == NotificationStatus.enable
+                                ? Icon(Icons.notifications_active)
+                                : Icon(Icons.notifications_none),
                       ),
                     ),
-                    SizedBox(width: 12,),
+                    SizedBox(
+                      width: 12,
+                    ),
                     InkWell(
                       borderRadius: BorderRadius.circular(32),
                       onTap: () {
@@ -259,7 +288,9 @@ class ListNotePage extends GetWidget<ListNotesController> {
                         child: Icon(Icons.edit_note_sharp),
                       ),
                     ),
-                    SizedBox(width: 12,),
+                    SizedBox(
+                      width: 12,
+                    ),
                     InkWell(
                       borderRadius: BorderRadius.circular(32),
                       onTap: () {
@@ -267,7 +298,10 @@ class ListNotePage extends GetWidget<ListNotesController> {
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Icon(Icons.remove_circle_outline_sharp, color: Colors.red, ),
+                        child: Icon(
+                          Icons.remove_circle_outline_sharp,
+                          color: Colors.red,
+                        ),
                       ),
                     ),
                   ],
