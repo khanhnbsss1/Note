@@ -3,12 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
-import 'package:note/config/app_config.dart';
-import 'package:note/pages/calendar/controller/calender_controller.dart';
 import 'package:note/pages/expense/model/incomeType.dart';
 import 'package:note/style/styles.dart';
-import 'package:note/util/date_utils.dart';
-import 'package:table_calendar/table_calendar.dart';
 
 import '../../controller/expense_controller.dart';
 

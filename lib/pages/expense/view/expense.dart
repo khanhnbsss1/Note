@@ -1,16 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
-import 'package:note/config/app_config.dart';
-import 'package:note/pages/calendar/controller/calender_controller.dart';
-import 'package:note/pages/expense/controller/expense_controller.dart';
 import 'package:note/pages/expense/widgets/expense_tab/expense_tab.dart';
 import 'package:note/pages/expense/widgets/income_tab/income_tab.dart';
 import 'package:note/style/styles.dart';
-import 'package:note/util/date_utils.dart';
-import 'package:table_calendar/table_calendar.dart';
 
 class ExpensePage extends StatefulWidget {
   const ExpensePage({super.key});
