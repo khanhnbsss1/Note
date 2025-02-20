@@ -208,6 +208,7 @@ class DateUtilsFormat {
     } else {
       dayOfWeekFormat = "Chủ Nhật - Sunday";
     }
+    dayOfWeekFormat = dayOfWeekFormat.replaceRange(dayOfWeekFormat.indexOf(' -'), dayOfWeekFormat.length, '');
     return dayOfWeekFormat;
   }
 

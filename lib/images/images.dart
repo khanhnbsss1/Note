@@ -1,0 +1,15 @@
+const String billElectricImg = 'assets/expense/bill_electric.png';
+const String billInternetImg = 'assets/expense/bill_internet.png';
+const String billWaterImg = 'assets/expense/bill_water.png';
+const String clothesImg = 'assets/expense/clothes.png';
+const String eatImg = 'assets/expense/eat.png';
+const String educationImg = 'assets/expense/education.png';
+const String entertainImg = 'assets/expense/entertain.png';
+const String giftImg = 'assets/expense/gift.png';
+const String healthCareImg = 'assets/expense/healthcare.png';
+const String moveImg = 'assets/expense/move.png';
+const String petImg = 'assets/expense/pet.png';
+const String extraMoneyImg = 'assets/expense/extraMoney.png';
+const String investImg= 'assets/expense/invest.png';
+const String otherMoneyImg = 'assets/expense/otherMoney.png';
+const String salaryImg = 'assets/expense/salary.png';

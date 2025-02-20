@@ -15,6 +15,7 @@ class AppConfigs {
   static const dateTimeDisplayFormat = 'dd/MM/yyyy HH:mm';
   static const dateTimeDisplayFormat1 = 'HH:mm dd/MM/yyyy';
   static const dateTimeDisplayFormat2 = 'HH:mm:ss dd/MM/yyyy';
+  static const dateTimeDisplayFormat3 = 'dd/MM';
 
   static const monthYearDisplay = 'MM/yyyy';
 }

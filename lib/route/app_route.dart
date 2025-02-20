@@ -1,4 +1,8 @@
 import 'package:get/get_navigation/src/routes/get_route.dart';
+import 'package:note/pages/expense/binding/expense_binding.dart';
+import 'package:note/pages/expense/view/expense.dart';
+import 'package:note/pages/history_transaction/binding/history_transaction_binding.dart';
+import 'package:note/pages/history_transaction/view/history_transaction_page.dart';
 
 import '../pages/add_edit_node/binding/add_edit_node_binding.dart';
 import '../pages/add_edit_node/view/add_edit_note.dart';
@@ -23,6 +27,14 @@ class AppRoute {
         name: '/listPage',
         page: () => ListNotePage(),
         binding: ListNotesBinding()),
+    GetPage(
+        name: '/expense',
+        page: () => ExpensePage(),
+        binding: ExpenseBinding()),
+    GetPage(
+        name: '/history_transtion',
+        page: () => HistoryTransactionPage(),
+        binding: HistoryTransactionBinding()),
     GetPage(
         name: '/profile',
         page: () => ProfilePage(),

@@ -38,7 +38,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: const Size(393, 830),
+      designSize: const Size(392, 890),
       builder: (context, widget) {
         return GestureDetector(
             onTap: () {
@@ -53,7 +53,7 @@ class _MyAppState extends State<MyApp> {
               title: 'Note pro',
               home: Homepage(),
               initialBinding: InitialBinding(),
-              getPages: AppRoute.routes
+              getPages: AppRoute.routes,
             ));
       },
     );

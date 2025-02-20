@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:note/pages/expense/view/expense.dart';
+import 'package:note/pages/history_transaction/view/history_transaction_page.dart';
 import 'package:note/pages/list_notes/view/list_note_page.dart';
 import 'package:note/pages/profile/view/profile_page.dart';
 
@@ -17,7 +19,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    tabController = TabController(length: 3, vsync: this);
+    tabController = TabController(length: 5, vsync: this);
     super.initState();
   }
 
@@ -33,6 +35,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
           children: [
             ListNotePage(),
             CalendarPage(),
+            ExpensePage(),
+            HistoryTransactionPage(),
             ProfilePage(),
           ],
         ),
@@ -60,6 +64,14 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
               BottomNavigationBarItem(
                 icon: Icon(Icons.calendar_month),
                 label: 'Calender',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.money),
+                label: 'Profile',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.monetization_on_outlined),
+                label: 'Profile',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person),

@@ -1,5 +1,3 @@
-import 'package:flutter/scheduler.dart';
-
 import '../pages/calendar/model/event.dart';
 
 class ListNote {
