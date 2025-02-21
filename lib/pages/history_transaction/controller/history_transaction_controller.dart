@@ -8,6 +8,7 @@ import '../view/dummy.dart' as dummy;
 class HistoryTransactionController extends GetxController {
   var dummyExpensesByDay = (dummy.dummyExpensesByDay).obs;
   var dummyIncomeByDay = (dummy.dummyIncomesByDay).obs;
+  var timeChart = TimeChart.week.obs;
   var isLineChart = false.obs;
   var isExpense = false.obs;
 
@@ -36,5 +37,13 @@ class HistoryTransactionController extends GetxController {
     }
     return sum / total;
   }
+}
 
+enum TimeChart {
+  week('Tuần'),
+  month('Tháng');
+
+  final String label;
+
+  const TimeChart(this.label);
 }

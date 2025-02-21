@@ -64,7 +64,33 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
                             ? Icons.shopping_cart
                             : Icons.account_balance,
                         color: Colors.white,
-                      ))
+                      )),
+                  DropdownMenu<TimeChart>(
+                    initialSelection: controller.timeChart.value,
+                    dropdownMenuEntries: TimeChart.values
+                        .map((e) => DropdownMenuEntry<TimeChart>(
+                        value: e, label: e.label),)
+                        .toList(),
+                    onSelected: (value) {
+                      if (value != null) {
+                        controller.timeChart.value = value;
+                      }
+                    },
+                    label: Text(
+                      'Ordered by ',
+                      style: AppTextStyle.heading5.copyWith(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                    textStyle: AppTextStyle.heading5.copyWith(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(width: 12.w,)
                 ],
               ),
             ),
