@@ -48,7 +48,7 @@ class _IncomeTabState extends State<IncomeTab> {
           ),
         ),
         ElevatedButton(onPressed: () {
-          controller.createTransaction(controller.selectedIncomeType.value, int.parse(moneyController.text));
+          controller.createTransaction<IncomeType>(controller.selectedIncomeType.value, int.parse(moneyController.text));
         }, child: Text('Thêm')),
       ],
     );

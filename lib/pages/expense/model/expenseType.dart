@@ -1,78 +1,26 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:note/images/images.dart';
+import 'package:note/pages/expense/model/transaction_type.dart';
 
-enum ExpenseType {
-  eat('Ăn uống'),
-  clothes('Quần áo'),
-  education('Giáo dục'),
-  entertain('Giải trí'),
-  move('Di chuyển'),
-  healthCare('Y tế'),
-  pet('Thú cưng'),
-  gift('Quà tặng'),
-  billElectric('Hoá đơn điện'),
-  billInternet('Hoá đơn mạng'),
-  billWater('Hoá đơn nước');
+enum ExpenseType implements TransactionCategory {
+  eat('Ăn uống', Colors.red, eatImg),
+  clothes('Quần áo', Colors.purple, clothesImg),
+  education('Giáo dục', Colors.green, educationImg),
+  entertain('Giải trí', Colors.orange, entertainImg),
+  move('Di chuyển', Colors.brown, moveImg),
+  healthCare('Y tế', Colors.teal, healthCareImg),
+  pet('Thú cưng', Colors.deepOrange, petImg),
+  gift('Quà tặng', Colors.pink, giftImg),
+  billElectric('Hoá đơn điện', Colors.yellow, billElectricImg),
+  billInternet('Hoá đơn mạng', Colors.blue, billInternetImg),
+  billWater('Hoá đơn nước', Colors.blueAccent, billWaterImg);
 
+  @override
   final String label;
+  @override
+  final Color color;
+  @override
+  final String icon;
 
-  const ExpenseType(this.label);
-}
-
-extension ExpenseTypeExtension on ExpenseType {
-  String get icon {
-    switch (this) {
-      case ExpenseType.billElectric:
-        return billElectricImg;
-      case ExpenseType.billInternet:
-        return billInternetImg;
-      case ExpenseType.billWater:
-        return billWaterImg;
-      case ExpenseType.clothes:
-        return clothesImg;
-      case ExpenseType.eat:
-        return eatImg;
-      case ExpenseType.education:
-        return educationImg;
-      case ExpenseType.entertain:
-        return entertainImg;
-      case ExpenseType.gift:
-        return giftImg;
-      case ExpenseType.healthCare:
-        return healthCareImg;
-      case ExpenseType.move:
-        return moveImg;
-      case ExpenseType.pet:
-        return petImg;
-    }
-  }
-
-  Color get color {
-    switch (this) {
-      case ExpenseType.billElectric:
-        return Colors.yellow.shade700;
-      case ExpenseType.billInternet:
-        return Colors.blue;
-      case ExpenseType.billWater:
-        return Colors.blue.shade300;
-      case ExpenseType.clothes:
-        return Colors.purple;
-      case ExpenseType.eat:
-        return Colors.red;
-      case ExpenseType.education:
-        return Colors.green.shade700;
-      case ExpenseType.entertain:
-        return Colors.orange;
-      case ExpenseType.gift:
-        return Colors.pink;
-      case ExpenseType.healthCare:
-        return Colors.teal;
-      case ExpenseType.move:
-        return Colors.brown;
-      case ExpenseType.pet:
-        return Colors.deepOrange;
-    }
-  }
+  const ExpenseType(this.label, this.color, this.icon);
 }

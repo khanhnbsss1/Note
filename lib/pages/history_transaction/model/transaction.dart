@@ -1,18 +1,17 @@
 import 'package:note/pages/expense/model/expenseType.dart';
 import 'package:note/pages/expense/model/incomeType.dart';
+import 'package:note/pages/expense/model/transaction_type.dart';
 
 class Transaction {
-  final ExpenseType? expenseType;
-  final IncomeType? incomeType;
+  final TransactionCategory? type;
   final int? amount;
   final String? note;
 
-  const Transaction({this.expenseType, this.incomeType, this.amount, this.note});
+  const Transaction({this.type, this.amount, this.note});
 
   Map<String, dynamic> toJson() {
     return {
-      'expenseType': expenseType?.name,
-      'incomeType': incomeType?.name,
+      'type': type.toString(),
       'amount': amount,
       'note': note,
     };
@@ -20,15 +19,31 @@ class Transaction {
 
   factory Transaction.fromJson(Map<String, dynamic> json) {
     return Transaction(
-      expenseType: json['expenseType'] != null
-          ? ExpenseType.values.byName(json['expenseType'])
-          : null,
-      incomeType: json['incomeType'] != null
-          ? IncomeType.values.byName(json['incomeType'])
-          : null,
+      type: _parseTransactionCategory(json['type']),
       amount: json['amount'],
       note: json['note'],
     );
+  }
+
+  bool get isExpense{
+   return type.toString().contains('ExpenseType');
+  }
+
+  static TransactionCategory? _parseTransactionCategory(String? typeStr) {
+    if (typeStr == null) return null;
+
+    var parts = typeStr.split('.');
+    if (parts.length < 2) return null;
+    String enumName = parts[1];
+
+    for (var type in ExpenseType.values) {
+      if (type.name == enumName) return type;
+    }
+    for (var type in IncomeType.values) {
+      if (type.name == enumName) return type;
+    }
+
+    return null;
   }
 }
 
@@ -59,7 +74,7 @@ class TransactionByDay {
   int get totalExpense {
     int total = 0;
     transactions?.forEach((e) {
-      if (e.expenseType != null) total = total + (e.amount ?? 0);
+      if (e.type != null && e.type.toString().contains('ExpenseType')) total = total + (e.amount ?? 0);
     });
     return total;
   }
@@ -67,7 +82,7 @@ class TransactionByDay {
   int get totalIncome {
     int total = 0;
     transactions?.forEach((e) {
-      if (e.incomeType != null) total = total + (e.amount ?? 0);
+      if (e.type != null && e.type.toString().contains('IncomeType')) total = total + (e.amount ?? 0);
     });
     return total;
   }

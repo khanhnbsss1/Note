@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 import 'package:note/pages/expense/model/incomeType.dart';
+import 'package:note/pages/expense/model/transaction_type.dart';
+import 'package:note/pages/history_transaction/model/transaction.dart';
 import '../../expense/model/expenseType.dart';
 import '../view/dummy.dart' as dummy;
 
@@ -22,27 +24,17 @@ class HistoryTransactionController extends GetxController {
     isExpense.value = !isExpense.value;
   }
 
-  double getPercentageExpense(ExpenseType type) {
+  double getPercentage<T extends TransactionCategory>(T type) {
     int sum = 0;
     int total = 0;
-    for (var e in dummyExpensesByDay) {
+    List<TransactionByDay> list = (type is ExpenseType) ? dummyExpensesByDay : dummyIncomeByDay;
+    for (var e in list) {
       e.transactions?.forEach((e1) {
-        if (e1.expenseType == type) sum = sum + (e1.amount ?? 0);
+        if (e1.type == type) sum = sum + (e1.amount ?? 0);
         total = total + (e1.amount ?? 0);
       });
     }
     return sum / total;
   }
 
-  double getPercentageIncome(IncomeType type) {
-    int sum = 0;
-    int total = 0;
-    for (var e in dummyIncomeByDay) {
-      e.transactions?.forEach((e1) {
-        if (e1.incomeType == type) sum = sum + (e1.amount ?? 0);
-        total = total + (e1.amount ?? 0);
-      });
-    }
-    return sum / total;
-  }
 }

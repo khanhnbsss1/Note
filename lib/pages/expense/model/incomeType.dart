@@ -1,43 +1,20 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:note/images/images.dart';
+import 'package:note/pages/expense/model/transaction_type.dart';
 
-enum IncomeType {
-  salary('Tiền lương'),
-  extra('Tiền thưởng'),
-  invest('Tiền đầu tư'),
-  other('Tiền khác');
+import '../../../images/images.dart';
 
+enum IncomeType implements TransactionCategory {
+  salary('Tiền lương', salaryImg, Colors.yellow),
+  extra('Tiền thưởng', extraMoneyImg, Colors.blue),
+  invest('Tiền đầu tư', investImg, Colors.blueAccent),
+  other('Tiền khác', otherMoneyImg, Colors.purple);
+
+  @override
   final String label;
+  @override
+  final Color color;
+  @override
+  final String icon;
 
-  const IncomeType(this.label);
-}
-
-extension IncomeTypeExtension on IncomeType {
-  String get icon {
-    switch (this) {
-      case IncomeType.salary:
-        return salaryImg;
-      case IncomeType.extra:
-        return extraMoneyImg;
-      case IncomeType.invest:
-        return investImg;
-      case IncomeType.other:
-        return otherMoneyImg;
-    }
-  }
-
-  Color get color {
-    switch (this) {
-      case IncomeType.salary:
-        return Colors.yellow.shade700;
-      case IncomeType.extra:
-        return Colors.blue;
-      case IncomeType.invest:
-        return Colors.blue.shade300;
-      case IncomeType.other:
-        return Colors.purple;
-    }
-  }
+  const IncomeType(this.label, this.icon, this.color);
 }

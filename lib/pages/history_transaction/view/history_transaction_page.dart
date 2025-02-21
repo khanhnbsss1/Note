@@ -2,10 +2,10 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:note/config/app_config.dart';
 import 'package:note/pages/expense/model/expenseType.dart';
 import 'package:note/pages/expense/model/incomeType.dart';
+import 'package:note/pages/expense/model/transaction_type.dart';
 import 'package:note/pages/history_transaction/model/transaction.dart';
 import 'package:note/style/styles.dart';
 import 'package:note/util/date_utils.dart';
@@ -72,7 +72,7 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 12.w),
             child: Obx(
-              () => (controller.isLineChart.value) ? lineChart() : pieChart(),
+              () => (controller.isLineChart.value) ? buildLineChart() : buildPieChart(),
             ),
           ),
           SizedBox(
@@ -115,8 +115,10 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
                 physics: NeverScrollableScrollPhysics(),
                 controller: tabController,
                 children: [
-                  expenseTab(),
-                  incomeTab(),
+                  // expenseTab(),
+                  // incomeTab(),
+                  detailTab(controller.dummyExpensesByDay),
+                  detailTab(controller.dummyIncomeByDay),
                 ]),
           ),
         ],
@@ -124,7 +126,7 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
     );
   }
 
-  Widget expenseTab() {
+  Widget detailTab(List<TransactionByDay> list) {
     return ListView.separated(
       physics: AlwaysScrollableScrollPhysics(),
       shrinkWrap: true,
@@ -138,20 +140,19 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
               ),
               child: ExpansionTile(
                 tilePadding: EdgeInsets.symmetric(horizontal: 12.w),
-                title: dayTile(controller.dummyExpensesByDay[index1].date!),
+                title: dayTile(list[index1].date!),
                 showTrailingIcon: false,
                 initiallyExpanded: true,
                 children: [
                   ListView.builder(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: controller.dummyExpensesByDay[index1].transactions!.length,
+                    itemCount: list[index1].transactions!.length,
                     itemBuilder: (context, index2) {
                       return Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: 8.w, vertical: 12.h),
-                        child: expenseItem(
-                            controller.dummyExpensesByDay[index1].transactions![index2]),
+                        child: item(list[index1].transactions![index2]),
                       );
                     },
                   ),
@@ -167,52 +168,6 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
         );
       },
       itemCount: controller.dummyExpensesByDay.length,
-    );
-  }
-
-  Widget incomeTab() {
-    return ListView.separated(
-      physics: AlwaysScrollableScrollPhysics(),
-      shrinkWrap: true,
-      itemBuilder: (context, index1) {
-        return Column(
-          children: [
-            Theme(
-              data: Theme.of(context).copyWith(
-                splashColor: Colors.transparent,
-                dividerColor: Colors.transparent,
-              ),
-              child: ExpansionTile(
-                tilePadding: EdgeInsets.symmetric(horizontal: 12.w),
-                title: dayTile(controller.dummyIncomeByDay[index1].date!),
-                showTrailingIcon: false,
-                initiallyExpanded: true,
-                children: [
-                  ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: controller.dummyIncomeByDay[index1].transactions!.length,
-                    itemBuilder: (context, index2) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 8.w, vertical: 12.h),
-                        child: incomeItem(
-                            controller.dummyIncomeByDay[index1].transactions![index2]),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            )
-          ],
-        );
-      },
-      separatorBuilder: (context, index) {
-        return SizedBox(
-          height: 16.h,
-        );
-      },
-      itemCount: controller.dummyIncomeByDay.length,
     );
   }
 
@@ -244,7 +199,7 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
     );
   }
 
-  Widget expenseItem(Transaction transaction) {
+  Widget item(Transaction transaction) {
     return ListTile(
       leading: Container(
         decoration: BoxDecoration(
@@ -252,16 +207,12 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
           shape: BoxShape.circle,
         ),
         child: Image.asset(
-          transaction.expenseType != null
-              ? transaction.expenseType!.icon
-              : transaction.incomeType!.icon,
+          transaction.type!.icon,
           height: 100.h,
         ),
       ),
       title: Text(
-        transaction.expenseType != null
-            ? transaction.expenseType!.label
-            : transaction.incomeType!.label,
+        transaction.type!.label,
         style: AppTextStyle.commonText.copyWith(
           color: Colors.white,
         ),
@@ -272,7 +223,7 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
             .copyWith(color: Colors.white, fontSize: 12.sp),
       ),
       trailing: Text(
-        '${transaction.expenseType != null ? StringFormatter.formatNumber(transaction.amount) : '-${StringFormatter.formatNumber(transaction.amount)}'} đ',
+        '${!transaction.isExpense ? StringFormatter.formatNumber(transaction.amount) : '-${StringFormatter.formatNumber(transaction.amount)}'} đ',
         style: AppTextStyle.commonText.copyWith(
           color: Colors.white,
         ),
@@ -280,46 +231,16 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
     );
   }
 
-  Widget incomeItem(Transaction transaction) {
-    return ListTile(
-      leading: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.circle,
-        ),
-        child: Image.asset(
-          transaction.incomeType!.icon,
-          height: 100.h,
-        ),
-      ),
-      title: Text(
-        transaction.incomeType!.label,
-        style: AppTextStyle.commonText.copyWith(
-          color: Colors.white,
-        ),
-      ),
-      subtitle: Text(
-        transaction.note ?? "",
-        style: AppTextStyle.commonText
-            .copyWith(color: Colors.white, fontSize: 12.sp),
-      ),
-      trailing: Text(
-        '${StringFormatter.formatNumber(transaction.amount)} đ',
-        style: AppTextStyle.commonText.copyWith(
-          color: Colors.white,
-        ),
-      ),
-    );
-  }
-
-  Widget lineChart() {
+  /// xâu dựng line chart
+  Widget buildLineChart() {
     return Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12.r),
           color: Colors.white.withValues(alpha: 0.2),
         ),
         height: 200.h,
-        padding: EdgeInsets.only(left: 20.w,right: 40.w, top: 16.h, bottom: 16.h),
+        padding:
+            EdgeInsets.only(left: 20.w, right: 40.w, top: 16.h, bottom: 16.h),
         child: LineChart(
           LineChartData(
             borderData: FlBorderData(show: false),
@@ -339,7 +260,7 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
                   maxIncluded: true,
                   minIncluded: false,
                   reservedSize: 40,
-                  interval: (!controller.isExpense.value) ? 1000000 : 100000,
+                  interval: (controller.isExpense.value) ? 100000 : 1000000,
                   getTitlesWidget: (value, meta) {
                     return Text(
                       '${(value ~/ 1000)}K',
@@ -356,10 +277,12 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
                   interval: 1,
                   getTitlesWidget: (value, meta) {
                     int index = value.toInt();
-                    if (index >= 0 && index < controller.dummyExpensesByDay.length) {
+                    List<TransactionByDay> list = (controller.isExpense.value) ? controller.dummyExpensesByDay : controller.dummyIncomeByDay;
+                    if (index >= 0 &&
+                        index < list.length) {
                       return Text(
                         DateUtilsFormat.toDateTimeString(
-                            controller.dummyExpensesByDay[index].date!,
+                            list[index].date!,
                             format: AppConfigs.dateTimeDisplayFormat3),
                         style: AppTextStyle.commonText.copyWith(
                             color: Colors.white.withValues(alpha: 0.6),
@@ -387,8 +310,7 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
                       barWidth: 3,
                       isStrokeCapRound: true,
                       belowBarData: BarAreaData(
-                          show: true,
-                          color: Colors.red.withValues(alpha: 0.3)),
+                          show: true, color: Colors.red.withValues(alpha: 0.3)),
                     )
                   :
 
@@ -396,7 +318,8 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
                   LineChartBarData(
                       spots: controller.dummyIncomeByDay.map((e) {
                         int totalIncome = e.totalIncome;
-                        return FlSpot(controller.dummyIncomeByDay.indexOf(e).toDouble(),
+                        return FlSpot(
+                            controller.dummyIncomeByDay.indexOf(e).toDouble(),
                             totalIncome.toDouble());
                       }).toList(),
                       isCurved: false,
@@ -404,7 +327,8 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
                       barWidth: 3,
                       isStrokeCapRound: true,
                       belowBarData: BarAreaData(
-                          show: true, color: Colors.green.withValues(alpha: 0.3)),
+                          show: true,
+                          color: Colors.green.withValues(alpha: 0.3)),
                     ),
             ],
           ),
@@ -413,7 +337,8 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
 
   int touchedIndex = -1;
 
-  Widget pieChart() {
+  /// xây dựng pie chart bao gồm các section và chú thích bên cạnh
+  Widget buildPieChart() {
     return Row(
       children: [
         Container(
@@ -444,7 +369,13 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
               borderData: FlBorderData(
                 show: true,
               ),
-              sections: controller.isExpense.value ? listSectionExpense() : listSectionIncome(),
+              sections: controller.isExpense.value
+                  ? generatePieChartSections(
+                      ExpenseType.values,
+                    )
+                  : generatePieChartSections(
+                      IncomeType.values,
+                    ),
             ),
           ),
         ),
@@ -452,141 +383,67 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ...(controller.isExpense.value) ?  ExpenseType.values
-                  .where((e) => controller.getPercentageExpense(e) > smallestPercentToShowOnChart)
-                  .map((e) => indicatorExpense(e))
-                  .toList() : IncomeType.values
-                  .where((e) => controller.getPercentageIncome(e) > smallestPercentToShowOnChart)
-                  .map((e) => indicatorIncome(e))
-                  .toList(),
-              ...[leftIndicator()],
-            ]
+              ..._buildIndicators(),
+              leftIndicator(),
+            ],
           ),
         ),
       ],
     );
   }
 
-  List<PieChartSectionData> listSectionExpense() {
+  /// xây dựng các chú thích của pie chart
+  List<Widget> _buildIndicators() {
+    final List<TransactionCategory> types =
+        controller.isExpense.value ? ExpenseType.values : IncomeType.values;
+
+    return types
+        .where(
+            (e) => controller.getPercentage(e) > smallestPercentToShowOnChart)
+        .map((e) => indicator(e))
+        .toList();
+  }
+
+  /// xây dựng các section của pie chart
+  List<PieChartSectionData>
+      generatePieChartSections<T extends TransactionCategory>(
+    List<T> values,
+  ) {
     int index = -1;
     double percentLeft = 1;
-    List<PieChartSectionData?> widget = ExpenseType.values.map((e) {
-      double percent = controller.getPercentageExpense(e);
+    Color defaultColor = Colors.lime;
+    List<PieChartSectionData?> sections = values.map((item) {
+      double percent = controller.getPercentage(item);
       if (percent > smallestPercentToShowOnChart) {
         percentLeft -= percent;
         index++;
         return PieChartSectionData(
           showTitle: true,
           value: percent,
-          color: e.color,
+          color: item.color,
           title: '${(percent * 100).toStringAsFixed(0)}%',
           titleStyle: TextStyle(color: Colors.white),
           radius: (touchedIndex == index) ? 40 : 30,
-          // badgeWidget: Text(
-          //   e.label,
-          //   style: AppTextStyle.commonText.copyWith(
-          //     color: Colors.white
-          //   ),
-          // ),
-          // badgePositionPercentageOffset: 2,
         );
       }
       return null;
     }).toList();
+
     if (percentLeft > 0.01) {
-      widget.add(PieChartSectionData(
-      showTitle: true,
-      value: percentLeft,
-      color: Colors.lime,
-      title: '${(percentLeft * 100).toStringAsFixed(0)}%',
-      titleStyle: TextStyle(color: Colors.white),
-      radius: (touchedIndex == index) ? 40 : 30,
-      // badgeWidget: Text(
-      //   e.label,
-      //   style: AppTextStyle.commonText.copyWith(
-      //     color: Colors.white
-      //   ),
-      // ),
-      // badgePositionPercentageOffset: 2,
-    ));
+      sections.add(PieChartSectionData(
+        showTitle: true,
+        value: percentLeft,
+        color: defaultColor,
+        title: '${(percentLeft * 100).toStringAsFixed(0)}%',
+        titleStyle: TextStyle(color: Colors.white),
+        radius: (touchedIndex == index) ? 40 : 30,
+      ));
     }
-    return widget.whereType<PieChartSectionData>().toList();
+    return sections.whereType<PieChartSectionData>().toList();
   }
 
-  List<PieChartSectionData> listSectionIncome() {
-    int index = -1;
-    double percentLeft = 1;
-    List<PieChartSectionData?> widget = IncomeType.values.map((e) {
-      double percent = controller.getPercentageIncome(e);
-      if (percent > smallestPercentToShowOnChart) {
-        percentLeft -= percent;
-        index++;
-        return PieChartSectionData(
-          showTitle: true,
-          value: percent,
-          color: e.color,
-          title: '${(percent * 100).toStringAsFixed(0)}%',
-          titleStyle: TextStyle(color: Colors.white),
-          radius: (touchedIndex == index) ? 40 : 30,
-          // badgeWidget: Text(
-          //   e.label,
-          //   style: AppTextStyle.commonText.copyWith(
-          //     color: Colors.white
-          //   ),
-          // ),
-          // badgePositionPercentageOffset: 2,
-        );
-      }
-      return null;
-    }).toList();
-    if (percentLeft > 0.01) {
-      widget.add(PieChartSectionData(
-      showTitle: true,
-      value: percentLeft,
-      color: Colors.lime,
-      title: '${(percentLeft * 100).toStringAsFixed(0)}%',
-      titleStyle: TextStyle(color: Colors.white),
-      radius: (touchedIndex == index) ? 40 : 30,
-      // badgeWidget: Text(
-      //   e.label,
-      //   style: AppTextStyle.commonText.copyWith(
-      //     color: Colors.white
-      //   ),
-      // ),
-      // badgePositionPercentageOffset: 2,
-    ));
-    }
-    return widget.whereType<PieChartSectionData>().toList();
-  }
-
-  Widget indicatorIncome(IncomeType type) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 12.h),
-      child: Row(
-        children: [
-          Container(
-            height: 20.r,
-            width: 20.r,
-            decoration: BoxDecoration(
-              color: type.color,
-              shape: BoxShape.circle,
-            ),
-          ),
-          SizedBox(
-            width: 12.w,
-          ),
-          Flexible(
-            child: Text(
-              type.label,
-              style: AppTextStyle.commonText.copyWith(color: Colors.white),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget indicatorExpense(ExpenseType type) {
+  /// xây dựng 1 chú thích của pie chart
+  Widget indicator<T extends TransactionCategory>(T type) {
     return Padding(
       padding: EdgeInsets.only(bottom: 12.h),
       child: Row(
@@ -614,6 +471,7 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
     );
   }
 
+  /// Chú thích còn lại của pie chart, được xây dựng khi phần còn lại chiếm hơn 0%
   Widget leftIndicator() {
     return Padding(
       padding: EdgeInsets.only(bottom: 12.h),
