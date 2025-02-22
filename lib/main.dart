@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:note/injector/injector.dart';
 import 'package:note/pages/homepage.dart';
+import 'package:note/pages/profile/controller/profile_controller.dart';
 import 'package:note/route/app_route.dart';
 import 'package:note/service/background_service/background_service.dart';
 import 'package:get/get.dart';
@@ -11,17 +12,17 @@ import 'package:note/service/background_service/work_manager.dart';
 import 'package:note/service/notification/notification_service.dart';
 import 'package:workmanager/workmanager.dart';
 import 'bindings/initial_binding.dart';
+import 'config/app_color.dart';
+import 'config/app_config.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Injector.initDJ();
   await NotificationService.init();
   await initializeBackGroundService();
-  Workmanager().initialize(
-      callbackDispatcher,
-      isInDebugMode: false
-  );
+  Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  Get.put(ProfileController());
   runApp(
     MyApp(),
   );
@@ -35,26 +36,39 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final settingsController = Get.find<ProfileController>();
+
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       designSize: const Size(392, 890),
       builder: (context, widget) {
         return GestureDetector(
-            onTap: () {
-              FocusScopeNode currentFocus = FocusScope.of(context);
-              if (!currentFocus.hasPrimaryFocus) {
-                currentFocus.unfocus();
-              }
+          onTap: () {
+            FocusScopeNode currentFocus = FocusScope.of(context);
+            if (!currentFocus.hasPrimaryFocus) {
+              currentFocus.unfocus();
+            }
+          },
+          child: GetBuilder<ProfileController>(
+            builder: (controller) {
+              return GetMaterialApp(
+                theme: ThemeData(
+                  scaffoldBackgroundColor: AppColor().background,
+                  bottomAppBarTheme: BottomAppBarTheme(
+                    color: AppColor().primary,
+                  ),
+                ),
+                navigatorKey: navigatorKey,
+                debugShowCheckedModeBanner: false,
+                title: 'Note pro',
+                home: Homepage(),
+                initialBinding: InitialBinding(),
+                getPages: AppRoute.routes,
+              );
             },
-            child: GetMaterialApp(
-              navigatorKey: navigatorKey,
-              debugShowCheckedModeBanner: false,
-              title: 'Note pro',
-              home: Homepage(),
-              initialBinding: InitialBinding(),
-              getPages: AppRoute.routes,
-            ));
+          ),
+        );
       },
     );
   }

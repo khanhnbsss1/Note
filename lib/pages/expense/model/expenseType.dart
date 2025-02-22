@@ -23,4 +23,7 @@ enum ExpenseType implements TransactionCategory {
   final String icon;
 
   const ExpenseType(this.label, this.color, this.icon);
+
+  @override
+  bool get isExpense => true;
 }

@@ -1,8 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:note/config/app_color.dart';
 import 'package:note/pages/expense/view/expense.dart';
 import 'package:note/pages/history_transaction/view/history_transaction_page.dart';
 import 'package:note/pages/list_notes/view/list_note_page.dart';
+import 'package:note/pages/profile/controller/profile_controller.dart';
 import 'package:note/pages/profile/view/profile_page.dart';
 
 import 'calendar/view/calendar.dart';
@@ -29,9 +33,10 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: TabBarView(
-          controller: tabController,
-          physics: NeverScrollableScrollPhysics(),
+        body: IndexedStack(
+          index: tabController.index,
+          // controller: tabController,
+          // physics: NeverScrollableScrollPhysics(),
           children: [
             ListNotePage(),
             CalendarPage(),
@@ -41,11 +46,9 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
           ],
         ),
         bottomNavigationBar: Theme(
-          data: ThemeData(splashColor: Colors.transparent),
+          data: ThemeData(splashColor: Colors.transparent,),
           child: BottomNavigationBar(
-            useLegacyColorScheme: false,
-            enableFeedback: false,
-            fixedColor: Colors.red,
+            backgroundColor: Theme.of(context).bottomAppBarTheme.color,
             type: BottomNavigationBarType.fixed,
             currentIndex: _currentIndex,
             onTap: (index) {

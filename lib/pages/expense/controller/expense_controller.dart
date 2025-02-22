@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:note/pages/expense/model/incomeType.dart';
 import 'package:note/pages/expense/model/transaction_type.dart';
@@ -10,33 +11,55 @@ class ExpenseController extends GetxController {
   var selectedExpenseType = (ExpenseType.eat).obs;
   var selectedIncomeType = (IncomeType.salary).obs;
   var controller = Get.find<HistoryTransactionController>();
+  final formKeyExpense = GlobalKey<FormState>();
+  final formKeyIncome = GlobalKey<FormState>();
 
-  void changeSelectedExpenseType(ExpenseType type) {
-    selectedExpenseType.value = type;
+  void submitForm(
+      {required bool isExpense, required String money, String? note}) {
+    final formKey = isExpense ? formKeyExpense : formKeyIncome;
+    if (formKey.currentState!.validate()) {
+      if (isExpense) {
+        createTransaction<ExpenseType>(
+          selectedExpenseType.value,
+          int.parse(money),
+          note ?? "",
+        );
+      } else {
+        createTransaction<IncomeType>(
+          selectedIncomeType.value,
+          int.parse(money),
+          note ?? "",
+        );
+      }
+    }
   }
 
-  void changeSelectedIncomeType(IncomeType type) {
-    selectedIncomeType.value = type;
+  void changeSelectedType<T extends TransactionCategory>(T type) {
+    if (type.isExpense) {
+      selectedExpenseType.value = type as ExpenseType;
+    } else {
+      selectedIncomeType.value = type as IncomeType;
+    }
   }
 
   void createTransaction<T extends TransactionCategory>(
     T type,
     int amount,
+      String note,
   ) {
-    List<TransactionByDay> list = (type == ExpenseType) ? controller.dummyExpensesByDay : controller.dummyIncomeByDay;
+    List<TransactionByDay> list = (type.isExpense) ? controller.expensesByDay : controller.incomeByDay;
     int index = list.indexWhere((e) => isTheSameDay(e.date!, DateTime.now()));
-    Transaction transaction = Transaction(note: 'Test Test Test', amount: amount, type: IncomeType.other);
+    Transaction transaction = Transaction(note: note, amount: amount, type: type);
     if (index >= 0) {
       list[index].transactions?.add(transaction);
     } else {
-      list.add(
+      list.insert(0,
         TransactionByDay(
           date: DateTime.now(),
           transactions: [transaction],
         ),
       );
     }
-    controller.dummyIncomeByDay[index].transactions;
     print('Thanh cong');
   }
 

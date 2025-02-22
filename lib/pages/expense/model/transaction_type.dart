@@ -4,4 +4,6 @@ abstract class TransactionCategory {
   String get icon;
   String get label;
   Color get color;
+
+  bool get isExpense;
 }

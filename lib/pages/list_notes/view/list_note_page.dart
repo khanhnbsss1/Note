@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:note/config/app_color.dart';
 import 'package:note/pages/add_edit_node/binding/add_edit_node_binding.dart';
 import 'package:note/pages/list_notes/controller/list_notes_controller.dart';
 
@@ -20,7 +21,7 @@ class ListNotePage extends GetWidget<ListNotesController> {
       body: CustomScrollView(
         shrinkWrap: true,
         slivers: [
-          buildAppBar(),
+          // buildAppBar(),
           Obx(
             () => SliverToBoxAdapter(
               child: Padding(
@@ -72,7 +73,7 @@ class ListNotePage extends GetWidget<ListNotesController> {
       expandedHeight: 150,
       stretchTriggerOffset: 150,
       forceElevated: true,
-      backgroundColor: Colors.teal,
+      backgroundColor: AppColor().textColor,
       flexibleSpace: FlexibleSpaceBar(
         stretchModes: [
           StretchMode.fadeTitle,
@@ -88,7 +89,7 @@ class ListNotePage extends GetWidget<ListNotesController> {
         background: DecoratedBox(
           decoration: BoxDecoration(
             gradient: LinearGradient(colors: [
-              Colors.teal.shade800,
+              AppColor().textColor,
               Colors.transparent,
             ], begin: Alignment.bottomCenter, end: Alignment.center),
           ),
@@ -143,7 +144,7 @@ class ListNotePage extends GetWidget<ListNotesController> {
 
   Widget buildButton() {
     return FloatingActionButton(
-      backgroundColor: Colors.teal.shade500,
+      backgroundColor: AppColor().primaryDark,
       onPressed: () {
         Get.to(() => AddEditNote(),
                 binding: AddEditNodeBinding(), transition: Transition.zoom)!
@@ -175,8 +176,10 @@ class ListNotePage extends GetWidget<ListNotesController> {
           width: double.infinity,
           padding: EdgeInsets.all(8.0),
           decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(),
+            color: AppColor().primaryLight,
+            border: Border.all(
+              // color: Colors.red
+            ),
             borderRadius: BorderRadius.circular(16.r),
             boxShadow: [
               BoxShadow(
@@ -215,7 +218,7 @@ class ListNotePage extends GetWidget<ListNotesController> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Checkbox(
-                        activeColor: Colors.teal,
+                        activeColor: AppColor().accentBlue,
                         value: note.done,
                         onChanged: (value) async {
                           controller.onNoteDone(index, value);

@@ -11,6 +11,7 @@ import 'package:note/style/styles.dart';
 import 'package:note/util/date_utils.dart';
 import 'package:note/util/string_format.dart';
 
+import '../../../config/app_color.dart';
 import '../controller/history_transaction_controller.dart';
 
 class HistoryTransactionPage extends StatefulWidget {
@@ -34,107 +35,31 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black87,
-      body: Column(
+    return SafeArea(
+      child:  Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Obx(
-            () => SizedBox(
-              height: 100.h,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  IconButton(
-                      onPressed: () {
-                        controller.showLineChart();
-                      },
-                      icon: Icon(
-                        controller.isLineChart.value
-                            ? Icons.stacked_line_chart
-                            : Icons.pie_chart,
-                        color: Colors.white,
-                      )),
-                  IconButton(
-                      onPressed: () {
-                        controller.showExpenseStatic();
-                      },
-                      icon: Icon(
-                        controller.isExpense.value
-                            ? Icons.shopping_cart
-                            : Icons.account_balance,
-                        color: Colors.white,
-                      )),
-                  DropdownMenu<TimeChart>(
-                    initialSelection: controller.timeChart.value,
-                    dropdownMenuEntries: TimeChart.values
-                        .map((e) => DropdownMenuEntry<TimeChart>(
-                        value: e, label: e.label),)
-                        .toList(),
-                    onSelected: (value) {
-                      if (value != null) {
-                        controller.timeChart.value = value;
-                      }
-                    },
-                    label: Text(
-                      'Ordered by ',
-                      style: AppTextStyle.heading5.copyWith(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 16,
-                        color: Colors.white,
-                      ),
-                    ),
-                    textStyle: AppTextStyle.heading5.copyWith(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
-                  ),
-                  SizedBox(width: 12.w,)
-                ],
-              ),
-            ),
-          ),
+          buildFunctionBar(),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 12.w),
             child: Obx(
-              () => (controller.isLineChart.value) ? buildLineChart() : buildPieChart(),
+                  () => (controller.isLineChart.value)
+                  ? buildLineChart()
+                  : buildPieChart(),
             ),
           ),
-          SizedBox(
-            height: 16.h,
-          ),
-          TabBar(
-            onTap: (value) {
-              tabController.animateTo(value);
-            },
-            controller: tabController,
-            indicatorColor: Colors.white,
-            dividerColor: Colors.transparent,
-            enableFeedback: false,
-            indicatorSize: TabBarIndicatorSize.tab,
-            tabs: [
-              Tab(
-                icon: Icon(
-                  Icons.shopping_cart,
-                  color: Colors.white,
-                ),
-                child: Text(
-                  'Chi tiêu',
-                  style: AppTextStyle.commonText.copyWith(color: Colors.white),
-                ),
-              ),
-              Tab(
-                icon: Icon(
-                  Icons.account_balance,
-                  color: Colors.white,
-                ),
-                child: Text(
-                  'Thu nhập',
-                  style: AppTextStyle.commonText.copyWith(color: Colors.white),
-                ),
-              ),
-            ],
+          Obx(
+                () => Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              child: Text(
+                  (controller.isExpense.value)
+                      ? 'Tổng chi : ${StringFormatter.formatNumber(controller.getTotalExpenseForMonth(DateTime.now()))} VND'
+                      : 'Tổng thu : ${StringFormatter.formatNumber(controller.getTotalIncomeForMonth(DateTime.now()))} VND',
+                  style: AppTextStyle.heading5.copyWith(
+                      color: controller.isExpense.value
+                          ? AppColor().accentPink
+                          : AppColor().accentGreen)),
+            ),
           ),
           Flexible(
             child: TabBarView(
@@ -143,11 +68,87 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
                 children: [
                   // expenseTab(),
                   // incomeTab(),
-                  detailTab(controller.dummyExpensesByDay),
-                  detailTab(controller.dummyIncomeByDay),
+                  detailTab(controller.expensesByDay),
+                  detailTab(controller.incomeByDay),
                 ]),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget buildFunctionBar() {
+    return Obx(
+          () => Container(
+        margin: EdgeInsets.symmetric(vertical: 8.h),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            IconButton(
+              onPressed: () {
+                controller.showLineChart();
+              },
+              icon: Icon(
+                controller.isLineChart.value
+                    ? Icons.stacked_line_chart
+                    : Icons.pie_chart,
+              ),
+              color: AppColor().iconColor,
+            ),
+            IconButton(
+              onPressed: () {
+                controller.showExpenseStatic();
+                setState(() {
+                  tabController.animateTo(controller.isExpense.value ? 0 : 1);
+                });
+              },
+              icon: Icon(
+                controller.isExpense.value
+                    ? Icons.shopping_cart
+                    : Icons.account_balance,
+              ),
+              color: AppColor().iconColor,
+            ),
+            DropdownMenu<TimeChart>(
+              initialSelection: controller.timeChart.value,
+              trailingIcon: Icon(
+                Icons.arrow_drop_down,
+                color: AppColor().textColor,
+              ),
+              selectedTrailingIcon: Icon(
+                Icons.arrow_drop_up,
+                color: AppColor().textColor,
+              ),
+              dropdownMenuEntries: TimeChart.values
+                  .map(
+                    (e) =>
+                        DropdownMenuEntry<TimeChart>(value: e, label: e.label),
+                  )
+                  .toList(),
+              onSelected: (value) {
+                if (value != null) {
+                  controller.timeChart.value = value;
+                }
+              },
+              label: Text(
+                'Ordered by ',
+                style: AppTextStyle.heading5.copyWith(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 16,
+                  color: AppColor().textColor,
+                ),
+              ),
+              textStyle: AppTextStyle.heading5.copyWith(
+                fontWeight: FontWeight.w400,
+                fontSize: 16,
+                color: AppColor().textColor,
+              ),
+            ),
+            SizedBox(
+              width: 12.w,
+            )
+          ],
+        ),
       ),
     );
   }
@@ -157,43 +158,35 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
       physics: AlwaysScrollableScrollPhysics(),
       shrinkWrap: true,
       itemBuilder: (context, index1) {
-        return Column(
-          children: [
-            Theme(
-              data: Theme.of(context).copyWith(
-                splashColor: Colors.transparent,
-                dividerColor: Colors.transparent,
+        return Theme(
+          data: Theme.of(context).copyWith(
+            splashColor: Colors.transparent,
+            dividerColor: Colors.transparent,
+          ),
+          child: ExpansionTile(
+            tilePadding: EdgeInsets.symmetric(horizontal: 12.w),
+            title: dayTile(list[index1].date!),
+            showTrailingIcon: false,
+            initiallyExpanded: true,
+            children: [
+              ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: list[index1].transactions!.length,
+                itemBuilder: (context, index2) {
+                  return item(list[index1].transactions![index2]);
+                },
               ),
-              child: ExpansionTile(
-                tilePadding: EdgeInsets.symmetric(horizontal: 12.w),
-                title: dayTile(list[index1].date!),
-                showTrailingIcon: false,
-                initiallyExpanded: true,
-                children: [
-                  ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: list[index1].transactions!.length,
-                    itemBuilder: (context, index2) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 8.w, vertical: 12.h),
-                        child: item(list[index1].transactions![index2]),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            )
-          ],
+            ],
+          ),
         );
       },
       separatorBuilder: (context, index) {
         return SizedBox(
-          height: 16.h,
+          height: 0.h,
         );
       },
-      itemCount: controller.dummyExpensesByDay.length,
+      itemCount: controller.expensesByDay.length,
     );
   }
 
@@ -211,13 +204,13 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
             DateUtilsFormat.toDateTimeString(date,
                 format: AppConfigs.dateAPIFormat),
             style: AppTextStyle.commonText.copyWith(
-              color: Colors.white,
+                color: AppColor().iconColor,
             ),
           ),
           Text(
             DateUtilsFormat.dayOfWeekFormat(date.weekday),
             style: AppTextStyle.commonText.copyWith(
-              color: Colors.white,
+                color: AppColor().iconColor,
             ),
           ),
         ],
@@ -234,25 +227,25 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
         ),
         child: Image.asset(
           transaction.type!.icon,
-          height: 100.h,
+          height: 60.h,
         ),
       ),
       title: Text(
         transaction.type!.label,
         style: AppTextStyle.commonText.copyWith(
-          color: Colors.white,
+            color: AppColor().textColor
         ),
       ),
-      subtitle: Text(
-        transaction.note ?? "",
-        style: AppTextStyle.commonText
-            .copyWith(color: Colors.white, fontSize: 12.sp),
-      ),
+      subtitle: (transaction.note != '' && transaction.note != null)
+          ? Text(
+              transaction.note ?? "",
+              style: AppTextStyle.commonText
+                  .copyWith(fontSize: 12.sp, color: AppColor().textColor),
+            )
+          : null,
       trailing: Text(
         '${!transaction.isExpense ? StringFormatter.formatNumber(transaction.amount) : '-${StringFormatter.formatNumber(transaction.amount)}'} đ',
-        style: AppTextStyle.commonText.copyWith(
-          color: Colors.white,
-        ),
+        style: AppTextStyle.commonText.copyWith(color: AppColor().textColor),
       ),
     );
   }
@@ -292,7 +285,7 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
                       '${(value ~/ 1000)}K',
                       style: TextStyle(
                           fontSize: 12,
-                          color: Colors.white.withValues(alpha: 0.6)),
+                          color: AppColor().textColor.withValues(alpha: 0.6)),
                     );
                   },
                 ),
@@ -303,15 +296,15 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
                   interval: 1,
                   getTitlesWidget: (value, meta) {
                     int index = value.toInt();
-                    List<TransactionByDay> list = (controller.isExpense.value) ? controller.dummyExpensesByDay : controller.dummyIncomeByDay;
-                    if (index >= 0 &&
-                        index < list.length) {
+                    List<TransactionByDay> list = (controller.isExpense.value)
+                        ? controller.expensesByDay
+                        : controller.incomeByDay;
+                    if (index >= 0 && index < list.length) {
                       return Text(
-                        DateUtilsFormat.toDateTimeString(
-                            list[index].date!,
+                        DateUtilsFormat.toDateTimeString(list[index].date!,
                             format: AppConfigs.dateTimeDisplayFormat3),
                         style: AppTextStyle.commonText.copyWith(
-                            color: Colors.white.withValues(alpha: 0.6),
+                            color: AppColor().textColor.withValues(alpha: 0.6),
                             fontSize: 12.sp),
                       );
                     }
@@ -325,10 +318,10 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
               // Expenses Line (Red)
               (controller.isExpense.value)
                   ? LineChartBarData(
-                      spots: controller.dummyExpensesByDay.map((e) {
+                      spots: controller.expensesByDay.map((e) {
                         int totalExpense = e.totalExpense;
                         return FlSpot(
-                            controller.dummyExpensesByDay.indexOf(e).toDouble(),
+                            controller.expensesByDay.indexOf(e).toDouble(),
                             totalExpense.toDouble());
                       }).toList(),
                       isCurved: false,
@@ -342,10 +335,10 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
 
                   // Income Line (Green)
                   LineChartBarData(
-                      spots: controller.dummyIncomeByDay.map((e) {
+                      spots: controller.incomeByDay.map((e) {
                         int totalIncome = e.totalIncome;
                         return FlSpot(
-                            controller.dummyIncomeByDay.indexOf(e).toDouble(),
+                            controller.incomeByDay.indexOf(e).toDouble(),
                             totalIncome.toDouble());
                       }).toList(),
                       isCurved: false,
@@ -488,7 +481,9 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
           Flexible(
             child: Text(
               type.label,
-              style: AppTextStyle.commonText.copyWith(color: Colors.white),
+              style: AppTextStyle.commonText.copyWith(
+                color: AppColor().textColor
+              ),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -517,7 +512,9 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
           Flexible(
             child: Text(
               'Còn lại',
-              style: AppTextStyle.commonText.copyWith(color: Colors.white),
+              style: AppTextStyle.commonText.copyWith(
+                  color: AppColor().textColor
+              ),
             ),
           ),
         ],

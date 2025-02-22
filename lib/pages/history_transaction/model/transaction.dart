@@ -26,7 +26,7 @@ class Transaction {
   }
 
   bool get isExpense{
-   return type.toString().contains('ExpenseType');
+   return type!.isExpense;
   }
 
   static TransactionCategory? _parseTransactionCategory(String? typeStr) {
@@ -72,18 +72,11 @@ class TransactionByDay {
   }
 
   int get totalExpense {
-    int total = 0;
-    transactions?.forEach((e) {
-      if (e.type != null && e.type.toString().contains('ExpenseType')) total = total + (e.amount ?? 0);
-    });
-    return total;
+    return transactions?.where((e) => e.isExpense).fold(0, (sum, t) => (sum??0) + (t.amount ?? 0)) ?? 0;
   }
 
   int get totalIncome {
-    int total = 0;
-    transactions?.forEach((e) {
-      if (e.type != null && e.type.toString().contains('IncomeType')) total = total + (e.amount ?? 0);
-    });
-    return total;
+    return transactions?.where((e) => !e.isExpense).fold(0, (sum, t) => (sum??0) + (t.amount ?? 0)) ?? 0;
   }
 }
+

@@ -16,6 +16,7 @@ class SharedPreferencesIml {
   static const PASSWORD = 'password';
   static const BIOMETRICS = 'biometric';
   static const NOTE = 'NOTE';
+  static const DARKMODE = 'darkmode';
 
   late SharedPreferences sharedPreferences;
 
@@ -44,4 +45,13 @@ class SharedPreferencesIml {
       return null;
     }
   }
+
+  Future<void> saveDarkMode(bool value) async {
+    await sharedPreferences.setBool(DARKMODE, value);
+  }
+
+  bool get darkMode {
+    return sharedPreferences.getBool(DARKMODE) ?? false;
+  }
+
 }
