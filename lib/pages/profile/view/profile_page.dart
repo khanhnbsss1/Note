@@ -6,6 +6,7 @@ import 'package:note/config/app_color.dart';
 import 'package:note/pages/profile/controller/profile_controller.dart';
 import 'package:note/style/styles.dart';
 
+import '../../../generated/l10n.dart';
 import '../widget/item_setting.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -38,20 +39,22 @@ class _ProfilePageState extends State<ProfilePage> {
             SizedBox(
               height: 8.h,
             ),
-            Center(child: Text('Xin chào ', style: AppTextStyle.commonText,)),
+            Center(child: Text(S.current.setting, style: AppTextStyle.commonText,)),
             SizedBox(
               height: 8.h,
             ),
             ItemSetting(
-                text: 'Ngôn ngữ',
-                onChanged: (_) {},
+                text: S.current.language,
+                onChanged: (_) {
+                  controller.saveLanguage(_);
+                },
                 icon: Icon(Icons.settings, color: AppColor().textColor,),
-                initialValue: controller.enDarkMode.value),
+                initialValue: controller.isLanguage.value == 1),
             SizedBox(
               height: 8.h,
             ),
             ItemSetting(
-                text: 'Chế độ ban đêm',
+                text: S.current.night_mode,
                 onChanged: (value) {
                   controller.saveSettings(value);
                 },
@@ -61,7 +64,7 @@ class _ProfilePageState extends State<ProfilePage> {
               height: 8.h,
             ),
             ItemSetting(
-                text: 'Cài đặt',
+                text: S.current.setting,
                 onChanged: (_) {},
                 icon: Icon(Icons.settings, color: AppColor().textColor,),
                 initialValue: controller.enDarkMode.value),
@@ -69,7 +72,7 @@ class _ProfilePageState extends State<ProfilePage> {
               height: 8.h,
             ),
             ItemSetting(
-                text: 'Cài đặt',
+                text: S.current.setting,
                 onChanged: (_) {},
                 icon: Icon(Icons.settings, color: AppColor().textColor,),
                 initialValue: controller.enDarkMode.value),
@@ -80,7 +83,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Phiên bản 1.0.0', style: AppTextStyle.commonText.copyWith(
+                Text('${S.current.version} ${controller.sharedPreferencesIml.version}', style: AppTextStyle.commonText.copyWith(
                   color: AppColor().textColor,
                 ),),
               ],

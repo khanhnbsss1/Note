@@ -12,6 +12,7 @@ import 'package:note/util/date_utils.dart';
 import 'package:note/util/string_format.dart';
 
 import '../../../config/app_color.dart';
+import '../../../generated/l10n.dart';
 import '../controller/history_transaction_controller.dart';
 
 class HistoryTransactionPage extends StatefulWidget {
@@ -53,8 +54,8 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
               padding: EdgeInsets.symmetric(horizontal: 12.w),
               child: Text(
                   (controller.isExpense.value)
-                      ? 'Tổng chi : ${StringFormatter.formatNumber(controller.getTotalExpenseForMonth(DateTime.now()))} VND'
-                      : 'Tổng thu : ${StringFormatter.formatNumber(controller.getTotalIncomeForMonth(DateTime.now()))} VND',
+                      ? '${S.current.total_expense} : ${StringFormatter.formatNumber(controller.getTotalExpenseForMonth(DateTime.now()))} VND'
+                      : '${S.current.total_income} : ${StringFormatter.formatNumber(controller.getTotalIncomeForMonth(DateTime.now()))} VND',
                   style: AppTextStyle.heading5.copyWith(
                       color: controller.isExpense.value
                           ? AppColor().accentPink
@@ -131,7 +132,7 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
                 }
               },
               label: Text(
-                'Ordered by ',
+                S.current.ordered_by,
                 style: AppTextStyle.heading5.copyWith(
                   fontWeight: FontWeight.w400,
                   fontSize: 16,
@@ -511,7 +512,7 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
           ),
           Flexible(
             child: Text(
-              'Còn lại',
+              S.current.remain,
               style: AppTextStyle.commonText.copyWith(
                   color: AppColor().textColor
               ),

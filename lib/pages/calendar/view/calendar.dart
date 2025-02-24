@@ -8,6 +8,8 @@ import 'package:note/style/styles.dart';
 import 'package:note/util/date_utils.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../../../generated/l10n.dart';
+
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
 
@@ -122,7 +124,7 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
           ),
           Obx(
                 () => (controller.showedEvent.isEmpty)
-                ? Text('No event')
+                ? Text(S.current.no_event)
                 : ListView.separated(
                 itemCount: controller.showedEvent.length,
                 shrinkWrap: true,

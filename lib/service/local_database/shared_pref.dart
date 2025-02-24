@@ -17,6 +17,7 @@ class SharedPreferencesIml {
   static const BIOMETRICS = 'biometric';
   static const NOTE = 'NOTE';
   static const DARKMODE = 'darkmode';
+  static const VERSION = 'version';
 
   late SharedPreferences sharedPreferences;
 
@@ -52,6 +53,23 @@ class SharedPreferencesIml {
 
   bool get darkMode {
     return sharedPreferences.getBool(DARKMODE) ?? false;
+  }
+
+  Future<void> saveAppVersion(String version) async {
+    await sharedPreferences.setString(VERSION, version);
+  }
+
+  String get version {
+    final string = sharedPreferences.getString(VERSION);
+    return string ?? "";
+  }
+
+  Future<void> saveLanguage(int value) async {
+    await sharedPreferences.setInt(ACCOUNT, value);
+  }
+
+  int get language {
+    return sharedPreferences.getInt(ACCOUNT) ?? 0;
   }
 
 }

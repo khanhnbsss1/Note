@@ -7,6 +7,7 @@ import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 import '../../../../config/app_config.dart';
 import '../../../../style/styles.dart';
 import '../../../../util/date_utils.dart';
+import '../../../generated/l10n.dart';
 import '../../../model/list_note.dart';
 import 'package:get/get.dart';
 
@@ -35,8 +36,8 @@ class AddEditNote extends GetWidget<AddEditNodeController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             buildRowData(
-              title: 'Title',
-              hintText: 'Enter your title',
+              title: S.current.title,
+              hintText: S.current.enter_your_title,
               controller: controller.titleController.value,
             ),
             Divider(
@@ -46,8 +47,8 @@ class AddEditNote extends GetWidget<AddEditNodeController> {
               color: Colors.grey.withValues(alpha: 0.2),
             ),
             buildRowData(
-              title: 'Date',
-              hintText: 'Pick your date',
+              title: S.current.date,
+              hintText: S.current.pick_your_date,
               controller: controller.dateController.value,
               readOnly: true,
               suffixIcon: Icon(
@@ -68,8 +69,8 @@ class AddEditNote extends GetWidget<AddEditNodeController> {
             ),
             Expanded(
               child: buildRowData(
-                title: 'Content',
-                hintText: 'Enter your content',
+                title: S.current.content,
+                hintText: S.current.enter_your_content,
                 controller: controller.contentController.value,
                 maxLine: 10,
               ),

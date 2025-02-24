@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:note/config/app_color.dart';
 import 'package:note/style/styles.dart';
 
+import '../../../generated/l10n.dart';
 import 'transaction_tab.dart';
 
 class ExpensePage extends StatefulWidget {
@@ -60,7 +61,7 @@ class _ExpensePageState extends State<ExpensePage>
                   color: AppColor().textColor
                 ),
                 child: Text(
-                  'Chi tiêu',
+                  S.current.expense,
                   style: AppTextStyle.commonText.copyWith(
                     color: AppColor().textColor,
                     fontWeight: FontWeight.bold,
@@ -73,7 +74,7 @@ class _ExpensePageState extends State<ExpensePage>
                   color: AppColor().textColor,
                 ),
                 child: Text(
-                  'Thu nhập',
+                  S.current.income,
                   style: AppTextStyle.commonText.copyWith(
                     color: AppColor().textColor,
                     fontWeight: FontWeight.bold,

@@ -9,6 +9,7 @@ import 'package:note/pages/list_notes/controller/list_notes_controller.dart';
 import '../../../../config/app_config.dart';
 import '../../../../style/styles.dart';
 import '../../../../util/date_utils.dart';
+import '../../../generated/l10n.dart';
 import '../../../model/list_note.dart';
 import '../../add_edit_node/view/add_edit_note.dart';
 
@@ -54,7 +55,7 @@ class _ListNotePageState extends State<ListNotePage> {
                       }
                     },
                     label: Text(
-                      'Ordered by ',
+                      S.current.ordered_by,
                       style: AppTextStyle.heading5.copyWith(
                         fontWeight: FontWeight.w400,
                         fontSize: 16,
@@ -99,7 +100,7 @@ class _ListNotePageState extends State<ListNotePage> {
           StretchMode.fadeTitle,
         ],
         title: Text(
-          'All notes',
+          S.current.all_notes,
           style: AppTextStyle.commonText.copyWith(
             color: Colors.white,
           ),

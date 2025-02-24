@@ -6,6 +6,7 @@ import 'package:note/pages/expense/model/expenseType.dart';
 import 'package:note/pages/expense/model/incomeType.dart';
 import 'package:note/style/styles.dart';
 
+import '../../../generated/l10n.dart';
 import '../controller/expense_controller.dart';
 
 class TransactionTab extends StatefulWidget {
@@ -72,7 +73,7 @@ class _TransactionTabState extends State<TransactionTab> {
                   controller: moneyController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    labelText: 'Enter Amount',
+                    labelText: S.current.enter_amount,
                     labelStyle: AppTextStyle.commonText.copyWith(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w500,
@@ -97,10 +98,10 @@ class _TransactionTabState extends State<TransactionTab> {
                   style: AppTextStyle.commonText.copyWith(fontSize: 18.sp),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Vui lòng điền số tiền';
+                      return S.current.please_enter_amount;
                     }
                     if (int.tryParse(value)! < 1000) {
-                      return 'Số tiền phải lớn hơn 1000';
+                      return S.current.enter_amount_warning;
                     }
                     return null;
                   },
@@ -116,7 +117,7 @@ class _TransactionTabState extends State<TransactionTab> {
                 TextFormField(
                   controller: noteController,
                   decoration: InputDecoration(
-                    labelText: 'Enter note',
+                    labelText: S.current.enter_note,
                     labelStyle: AppTextStyle.commonText.copyWith(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w500,
