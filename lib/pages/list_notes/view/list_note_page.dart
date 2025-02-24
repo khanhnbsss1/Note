@@ -12,8 +12,15 @@ import '../../../../util/date_utils.dart';
 import '../../../model/list_note.dart';
 import '../../add_edit_node/view/add_edit_note.dart';
 
-class ListNotePage extends GetWidget<ListNotesController> {
+class ListNotePage extends StatefulWidget {
   const ListNotePage({super.key});
+
+  @override
+  State<ListNotePage> createState() => _ListNotePageState();
+}
+
+class _ListNotePageState extends State<ListNotePage> {
+  final controller = Get.find<ListNotesController>();
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +30,7 @@ class ListNotePage extends GetWidget<ListNotesController> {
         slivers: [
           // buildAppBar(),
           Obx(
-            () => SliverToBoxAdapter(
+                () => SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
                 child: Align(
@@ -32,8 +39,15 @@ class ListNotePage extends GetWidget<ListNotesController> {
                     initialSelection: controller.listType.value,
                     dropdownMenuEntries: TypeList.values
                         .map((e) => DropdownMenuEntry<TypeList>(
-                            value: e, label: e.label!))
+                        value: e, label: e.label!))
                         .toList(),
+                    inputDecorationTheme: InputDecorationTheme(
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: AppColor().textColor,
+                            )
+                        )
+                    ),
                     onSelected: (value) {
                       if (value != null) {
                         controller.changeTypeList(value);
@@ -44,7 +58,13 @@ class ListNotePage extends GetWidget<ListNotesController> {
                       style: AppTextStyle.heading5.copyWith(
                         fontWeight: FontWeight.w400,
                         fontSize: 16,
+                        color: AppColor().textColor,
                       ),
+                    ),
+                    textStyle: AppTextStyle.heading5.copyWith(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16,
+                      color: AppColor().textColor,
                     ),
                   ),
                 ),
@@ -52,7 +72,7 @@ class ListNotePage extends GetWidget<ListNotesController> {
             ),
           ),
           Obx(
-            () => buildContent(),
+                () => buildContent(),
           )
         ],
         physics: BouncingScrollPhysics(),
@@ -106,31 +126,31 @@ class ListNotePage extends GetWidget<ListNotesController> {
   Widget buildContent() {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
-        (context, index) {
+            (context, index) {
           return Stack(
             children: [
               (controller.shownNotes.value.list != null)
                   ? Padding(
-                      padding: EdgeInsets.only(
-                          bottom: 8.h, left: 8.w, right: 8.w, top: 8.h),
-                      child: LongPressDraggable(
-                        childWhenDragging: buildItem(
-                          note: controller.shownNotes.value.list![index],
-                          index: index,
-                        ),
-                        feedback: buildItem(
-                            note: controller.shownNotes.value.list![index],
-                            index: index,
-                            onDrag: true),
-                        child: Hero(
-                          tag: controller.shownNotes.value.list![index].time ??
-                              DateTime.now(),
-                          child: buildItem(
-                              note: controller.shownNotes.value.list![index],
-                              index: index),
-                        ),
-                      ),
-                    )
+                padding: EdgeInsets.only(
+                    bottom: 8.h, left: 8.w, right: 8.w, top: 8.h),
+                child: LongPressDraggable(
+                  childWhenDragging: buildItem(
+                    note: controller.shownNotes.value.list![index],
+                    index: index,
+                  ),
+                  feedback: buildItem(
+                      note: controller.shownNotes.value.list![index],
+                      index: index,
+                      onDrag: true),
+                  child: Hero(
+                    tag: controller.shownNotes.value.list![index].time ??
+                        DateTime.now(),
+                    child: buildItem(
+                        note: controller.shownNotes.value.list![index],
+                        index: index),
+                  ),
+                ),
+              )
                   : SizedBox(),
             ],
           );
@@ -147,7 +167,7 @@ class ListNotePage extends GetWidget<ListNotesController> {
       backgroundColor: AppColor().primaryDark,
       onPressed: () {
         Get.to(() => AddEditNote(),
-                binding: AddEditNodeBinding(), transition: Transition.zoom)!
+            binding: AddEditNodeBinding(), transition: Transition.zoom)!
             .then((value) {
           if (value is NoteDetail) {
             controller.addNote(value);
@@ -178,13 +198,13 @@ class ListNotePage extends GetWidget<ListNotesController> {
           decoration: BoxDecoration(
             color: AppColor().primaryLight,
             border: Border.all(
-              // color: Colors.red
+              color: AppColor().textColor,
             ),
             borderRadius: BorderRadius.circular(16.r),
             boxShadow: [
               BoxShadow(
                 color:
-                    Colors.black.withValues(alpha: onDrag ?? false ? 0.6 : 0.2),
+                Colors.black.withValues(alpha: onDrag ?? false ? 0.6 : 0.2),
                 blurRadius: 5,
                 offset: Offset(2, 2),
               ),
@@ -263,9 +283,9 @@ class ListNotePage extends GetWidget<ListNotesController> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child:
-                            note.notificationStatus == NotificationStatus.enable
-                                ? Icon(Icons.notifications_active)
-                                : Icon(Icons.notifications_none),
+                        note.notificationStatus == NotificationStatus.enable
+                            ? Icon(Icons.notifications_active)
+                            : Icon(Icons.notifications_none),
                       ),
                     ),
                     SizedBox(
@@ -276,10 +296,10 @@ class ListNotePage extends GetWidget<ListNotesController> {
                       onTap: () {
                         Get.to(
                                 () => AddEditNote(
-                                      note: note,
-                                    ),
-                                binding: AddEditNodeBinding(),
-                                transition: Transition.zoom)!
+                              note: note,
+                            ),
+                            binding: AddEditNodeBinding(),
+                            transition: Transition.zoom)!
                             .then((value) {
                           if (value is NoteDetail) {
                             controller.editNote(index, value);

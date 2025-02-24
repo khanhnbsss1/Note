@@ -1,8 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:note/config/app_color.dart';
 import 'package:note/config/app_config.dart';
 import 'package:note/pages/calendar/controller/calender_controller.dart';
 import 'package:note/style/styles.dart';
@@ -87,6 +86,34 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
                     BoxDecoration(shape: BoxShape.circle, color: Colors.red),
                     canMarkersOverflow: true,
                     markersMaxCount: 1,
+                    outsideTextStyle: AppTextStyle.commonText.copyWith(
+                      color: AppColor().textColor.withValues(alpha: 0.5),
+                    ),
+                    todayTextStyle: AppTextStyle.commonText.copyWith(
+                      color: AppColor().background,
+                    ),
+                    weekNumberTextStyle: TextStyle(
+                      color: Colors.blue,
+                    ),
+                    weekendTextStyle: AppTextStyle.commonText.copyWith(
+                      color: AppColor().textColor,
+                    ),
+                    selectedTextStyle: AppTextStyle.commonText.copyWith(
+                      color: AppColor().background,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    defaultTextStyle: AppTextStyle.commonText.copyWith(
+                      color: AppColor().textColor,
+                    ),
+                    rangeStartTextStyle: TextStyle(
+                      color: Colors.cyan,
+                    ),
+                    disabledTextStyle: TextStyle(
+                      color: Colors.grey,
+                    ),
+                    rangeEndTextStyle: TextStyle(
+                      color: Colors.deepOrangeAccent
+                    )
                   ),
                 ),
           ),

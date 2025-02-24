@@ -3,14 +3,13 @@ import 'package:get_it/get_it.dart';
 import 'package:note/service/local_database/shared_pref.dart';
 
 class  ProfileController extends GetxController {
-  late SharedPreferencesIml sharedPreferencesIml;
-  var enDarkMode = false.obs;
+  SharedPreferencesIml sharedPreferencesIml = GetIt.instance.get();
+  late dynamic enDarkMode;
 
 
   @override
   void onInit() {
-    sharedPreferencesIml = GetIt.instance.get();
-    enDarkMode.value = sharedPreferencesIml.darkMode;
+    enDarkMode = sharedPreferencesIml.darkMode.obs;
     super.onInit();
   }
 
