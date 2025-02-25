@@ -1,11 +1,7 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:note/config/app_config.dart';
-import 'package:note/pages/expense/model/expenseType.dart';
-import 'package:note/pages/expense/model/incomeType.dart';
-import 'package:note/pages/expense/model/transaction_type.dart';
 import 'package:note/pages/history_transaction/model/transaction.dart';
 import 'package:note/pages/history_transaction/widget/pie_chart.dart';
 import 'package:note/style/styles.dart';
