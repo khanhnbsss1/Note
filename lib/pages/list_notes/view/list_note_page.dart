@@ -31,7 +31,7 @@ class _ListNotePageState extends State<ListNotePage> {
         slivers: [
           // buildAppBar(),
           Obx(
-                () => SliverToBoxAdapter(
+            () => SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
                 child: Align(
@@ -39,16 +39,27 @@ class _ListNotePageState extends State<ListNotePage> {
                   child: DropdownMenu<TypeList>(
                     initialSelection: controller.listType.value,
                     dropdownMenuEntries: TypeList.values
-                        .map((e) => DropdownMenuEntry<TypeList>(
-                        value: e, label: e.label!))
+                        .map(
+                          (e) => DropdownMenuEntry<TypeList>(
+                              value: e,
+                              labelWidget: Text(
+                                e.label!,
+                                style: AppTextStyle.commonText.copyWith(
+                                  color: AppColor().textColor,
+                                ),
+                              ),
+                              label: e.label!),
+                        )
                         .toList(),
+                    menuStyle: MenuStyle(
+                      backgroundColor: WidgetStatePropertyAll(
+                          Theme.of(context).scaffoldBackgroundColor),
+                    ),
                     inputDecorationTheme: InputDecorationTheme(
                         border: OutlineInputBorder(
                             borderSide: BorderSide(
-                              color: AppColor().textColor,
-                            )
-                        )
-                    ),
+                      color: AppColor().textColor,
+                    ))),
                     onSelected: (value) {
                       if (value != null) {
                         controller.changeTypeList(value);
@@ -73,7 +84,7 @@ class _ListNotePageState extends State<ListNotePage> {
             ),
           ),
           Obx(
-                () => buildContent(),
+            () => buildContent(),
           )
         ],
         physics: BouncingScrollPhysics(),
@@ -127,31 +138,31 @@ class _ListNotePageState extends State<ListNotePage> {
   Widget buildContent() {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
-            (context, index) {
+        (context, index) {
           return Stack(
             children: [
               (controller.shownNotes.value.list != null)
                   ? Padding(
-                padding: EdgeInsets.only(
-                    bottom: 8.h, left: 8.w, right: 8.w, top: 8.h),
-                child: LongPressDraggable(
-                  childWhenDragging: buildItem(
-                    note: controller.shownNotes.value.list![index],
-                    index: index,
-                  ),
-                  feedback: buildItem(
-                      note: controller.shownNotes.value.list![index],
-                      index: index,
-                      onDrag: true),
-                  child: Hero(
-                    tag: controller.shownNotes.value.list![index].time ??
-                        DateTime.now(),
-                    child: buildItem(
-                        note: controller.shownNotes.value.list![index],
-                        index: index),
-                  ),
-                ),
-              )
+                      padding: EdgeInsets.only(
+                          bottom: 8.h, left: 8.w, right: 8.w, top: 8.h),
+                      child: LongPressDraggable(
+                        childWhenDragging: buildItem(
+                          note: controller.shownNotes.value.list![index],
+                          index: index,
+                        ),
+                        feedback: buildItem(
+                            note: controller.shownNotes.value.list![index],
+                            index: index,
+                            onDrag: true),
+                        child: Hero(
+                          tag: controller.shownNotes.value.list![index].time ??
+                              DateTime.now(),
+                          child: buildItem(
+                              note: controller.shownNotes.value.list![index],
+                              index: index),
+                        ),
+                      ),
+                    )
                   : SizedBox(),
             ],
           );
@@ -168,7 +179,7 @@ class _ListNotePageState extends State<ListNotePage> {
       backgroundColor: AppColor().primaryDark,
       onPressed: () {
         Get.to(() => AddEditNote(),
-            binding: AddEditNodeBinding(), transition: Transition.zoom)!
+                binding: AddEditNodeBinding(), transition: Transition.zoom)!
             .then((value) {
           if (value is NoteDetail) {
             controller.addNote(value);
@@ -205,7 +216,7 @@ class _ListNotePageState extends State<ListNotePage> {
             boxShadow: [
               BoxShadow(
                 color:
-                Colors.black.withValues(alpha: onDrag ?? false ? 0.6 : 0.2),
+                    Colors.black.withValues(alpha: onDrag ?? false ? 0.6 : 0.2),
                 blurRadius: 5,
                 offset: Offset(2, 2),
               ),
@@ -284,9 +295,9 @@ class _ListNotePageState extends State<ListNotePage> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child:
-                        note.notificationStatus == NotificationStatus.enable
-                            ? Icon(Icons.notifications_active)
-                            : Icon(Icons.notifications_none),
+                            note.notificationStatus == NotificationStatus.enable
+                                ? Icon(Icons.notifications_active)
+                                : Icon(Icons.notifications_none),
                       ),
                     ),
                     SizedBox(
@@ -297,10 +308,10 @@ class _ListNotePageState extends State<ListNotePage> {
                       onTap: () {
                         Get.to(
                                 () => AddEditNote(
-                              note: note,
-                            ),
-                            binding: AddEditNodeBinding(),
-                            transition: Transition.zoom)!
+                                      note: note,
+                                    ),
+                                binding: AddEditNodeBinding(),
+                                transition: Transition.zoom)!
                             .then((value) {
                           if (value is NoteDetail) {
                             controller.editNote(index, value);

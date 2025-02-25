@@ -7,9 +7,17 @@ import '../view/dummy.dart' as dummy;
 class HistoryTransactionController extends GetxController {
   var expensesByDay = (dummy.dummyExpensesByDay).obs;
   var incomeByDay = (dummy.dummyIncomesByDay).obs;
-  var timeChart = TimeChart.week.obs;
+  var timeChart = TimeChart.day.obs;
   var isLineChart = false.obs;
   var isExpense = true.obs;
+  var count = 7.obs;
+
+  void changeTimeChart(TimeChart type) {
+    timeChart.value = type;
+    // if (type == TimeChart.day) count.value = 7;
+    // if (type == TimeChart.week) count.value = 8;
+    // if (type == TimeChart.month) count.value = 12;
+  }
 
   void showLineChart() {
     isLineChart.value = !isLineChart.value;
@@ -17,6 +25,29 @@ class HistoryTransactionController extends GetxController {
 
   void showExpenseStatic() {
     isExpense.value = !isExpense.value;
+  }
+
+  double getIntervalForLineChart() {
+    int max = 0;
+    int min = 0;
+    // if (timeChart.value == TimeChart.day) {
+      if (isExpense.value) {
+        for (var e in expensesByDay) {
+          {
+            if (max < e.totalExpense) max = e.totalExpense;
+            if (min > e.totalExpense) min = e.totalExpense;
+          }
+        }
+      } else {
+        for (var e in incomeByDay) {
+          {
+            if (max < e.totalIncome) max = e.totalIncome;
+            if (min > e.totalIncome) min = e.totalIncome;
+          }
+        }
+      }
+    // }
+    return (max - min) / 5;
   }
 
   double getPercentage<T extends TransactionCategory>(T type) {
