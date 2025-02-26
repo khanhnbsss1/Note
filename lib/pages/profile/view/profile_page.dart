@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:note/config/app_color.dart';
+import 'package:note/images/images.dart';
 import 'package:note/pages/profile/controller/profile_controller.dart';
 import 'package:note/style/styles.dart';
 
@@ -143,33 +144,22 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget buildLanguageTrailing() {
     return Row(
       children: [
-        AnimatedContainer(
-          duration: Duration(milliseconds: 100),
-          curve: Curves.easeInOutCubic,
-          child: Opacity(
-            opacity: controller.languageCode.value == 'vi' ? 1 : 0.5,
-            child: GestureDetector(
-              onTap: () {
-                controller.saveLanguage('vi');
-              },
-              child: Icon(Icons.flag, color: AppColor().textColor,),
-            ),
-          ),
-        ),
-        AnimatedContainer(
-          duration: Duration(milliseconds: 100),
-          curve: Curves.easeInOutCubic,
-          child: Opacity(
-            opacity: controller.languageCode.value == 'en' ? 1 : 0.5,
-            child: GestureDetector(
-              onTap: () {
-                controller.saveLanguage('en');
-              },
-              child: Icon(Icons.flag_circle, color: AppColor().textColor,),
-            ),
-          ),
-        ),
+        _buildLanguageFlag('vi', vnFlag),
+        _buildLanguageFlag('en', usFlag),
       ],
     );
   }
+
+  Widget _buildLanguageFlag(String langCode, String assetPath) {
+    return AnimatedOpacity(
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeInOutCubic,
+      opacity: controller.languageCode.value == langCode ? 1 : 0.2,
+      child: GestureDetector(
+        onTap: () => controller.saveLanguage(langCode),
+        child: Image.asset(assetPath),
+      ),
+    );
+  }
+
 }

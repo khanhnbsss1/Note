@@ -13,3 +13,5 @@ const String extraMoneyImg = 'assets/expense/extraMoney.png';
 const String investImg= 'assets/expense/invest.png';
 const String otherMoneyImg = 'assets/expense/otherMoney.png';
 const String salaryImg = 'assets/expense/salary.png';
+const String vnFlag = 'assets/flag/vn.png';
+const String usFlag = 'assets/flag/us.png';
