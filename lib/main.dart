@@ -64,25 +64,28 @@ class _MyAppState extends State<MyApp> {
           child: GetBuilder<ProfileController>(
             builder: (controller) {
               return GetMaterialApp(
-                theme: ThemeData(
+                theme: ThemeData.light().copyWith(
                   scaffoldBackgroundColor: AppColor().background,
                   bottomAppBarTheme: BottomAppBarTheme(
                     color: AppColor().primary,
                   ),
                 ),
                 navigatorKey: navigatorKey,
-                localizationsDelegates: [
+                localizationsDelegates: const [
                   S.delegate,
                   GlobalMaterialLocalizations.delegate,
                   GlobalWidgetsLocalizations.delegate,
                   GlobalCupertinoLocalizations.delegate,
                 ],
-                locale: S.delegate.supportedLocales[settingsController.isLanguage.value],
+                locale: S.delegate.supportedLocales.firstWhere(
+                      (locale) => locale.languageCode == settingsController.languageCode.value,
+                  orElse: () => S.delegate.supportedLocales.first,
+                ),
                 supportedLocales: S.delegate.supportedLocales,
                 debugShowCheckedModeBanner: false,
-                home: Homepage(),
                 initialBinding: InitialBinding(),
                 getPages: AppRoute.routes,
+                home: Homepage(),
               );
             },
           ),

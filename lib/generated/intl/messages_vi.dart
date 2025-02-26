@@ -22,6 +22,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "Time_check_transaction": MessageLookupByLibrary.simpleMessage(
+      "Thời gian xem thu chi (Tháng)",
+    ),
     "all_notes": MessageLookupByLibrary.simpleMessage("Tất cả ghi chú"),
     "content": MessageLookupByLibrary.simpleMessage("Nội dung"),
     "date": MessageLookupByLibrary.simpleMessage("Ngày"),
@@ -71,9 +74,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "remain": MessageLookupByLibrary.simpleMessage("Còn lại"),
     "setting": MessageLookupByLibrary.simpleMessage("Cài đặt"),
+    "time": MessageLookupByLibrary.simpleMessage("Thời gian :"),
     "title": MessageLookupByLibrary.simpleMessage("Tiêu đề"),
-    "total_expense": MessageLookupByLibrary.simpleMessage("Tổng chi:"),
-    "total_income": MessageLookupByLibrary.simpleMessage("Tổng thu:"),
+    "total_expense": MessageLookupByLibrary.simpleMessage("Tổng chi :"),
+    "total_income": MessageLookupByLibrary.simpleMessage("Tổng thu :"),
     "version": MessageLookupByLibrary.simpleMessage("Phiên bản"),
   };
 }

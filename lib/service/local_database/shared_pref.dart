@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:rate_my_app/rate_my_app.dart';
@@ -18,6 +19,8 @@ class SharedPreferencesIml {
   static const NOTE = 'NOTE';
   static const DARKMODE = 'darkmode';
   static const VERSION = 'version';
+  static const LOCALE = 'locale';
+  static const MONTH_TIME = 'monthTime';
 
   late SharedPreferences sharedPreferences;
 
@@ -64,12 +67,19 @@ class SharedPreferencesIml {
     return string ?? "";
   }
 
-  Future<void> saveLanguage(int value) async {
-    await sharedPreferences.setInt(ACCOUNT, value);
+  Future<void> saveLanguage(String languageCode) async {
+    await sharedPreferences.setString(LOCALE, languageCode.toString());
   }
 
-  int get language {
-    return sharedPreferences.getInt(ACCOUNT) ?? 0;
+  String get language {
+    return sharedPreferences.getString(LOCALE) ?? 'vi';
   }
 
+  Future<void> saveMonthTime(int monthTime) async {
+    await sharedPreferences.setInt(MONTH_TIME, monthTime);
+  }
+
+  int get monthTime {
+    return sharedPreferences.getInt(MONTH_TIME) ?? 1;
+  }
 }

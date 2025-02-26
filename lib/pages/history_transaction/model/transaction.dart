@@ -7,7 +7,7 @@ class Transaction {
   final int? amount;
   final String? note;
 
-  const Transaction({this.type, this.amount, this.note});
+  const Transaction({this.type, this.amount, this.note,});
 
   Map<String, dynamic> toJson() {
     return {

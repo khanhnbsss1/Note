@@ -49,6 +49,7 @@ class _ItemSettingState extends State<ItemSetting> {
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+        height: 60.h,
         decoration: BoxDecoration(
           border: Border.all(
             color: AppColor().textColor

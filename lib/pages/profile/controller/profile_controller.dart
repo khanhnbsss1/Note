@@ -6,13 +6,15 @@ import '../../../generated/l10n.dart';
 
 class  ProfileController extends GetxController {
   SharedPreferencesIml sharedPreferencesIml = GetIt.instance.get();
-  late dynamic enDarkMode;
-  late dynamic isLanguage;
+  late RxBool enDarkMode;
+  late RxString languageCode;
+  late RxInt monthTime;
 
   @override
   void onInit() {
     enDarkMode = sharedPreferencesIml.darkMode.obs;
-    isLanguage = sharedPreferencesIml.language.obs;
+    languageCode = sharedPreferencesIml.language.obs;
+    monthTime = sharedPreferencesIml.monthTime.obs;
     super.onInit();
   }
 
@@ -23,12 +25,15 @@ class  ProfileController extends GetxController {
     update();
   }
 
-  Future<void> saveLanguage(bool value) async {
-    final newLanguage = value ? 1 : 0;
-    await sharedPreferencesIml.saveLanguage(newLanguage);
-    isLanguage.value = newLanguage;
-    Get.updateLocale(S.delegate.supportedLocales[newLanguage]);
+  Future<void> saveLanguage(String languageCode) async {
+    await sharedPreferencesIml.saveLanguage(languageCode);
+    this.languageCode.value = languageCode;
+    Get.updateLocale(S.delegate.supportedLocales.where((e) => e.languageCode == languageCode).first);
     update();
   }
 
+  Future<void> saveMonthTime(int value) async {
+    await sharedPreferencesIml.saveMonthTime(value);
+    monthTime.value = value;
+  }
 }

@@ -30,7 +30,7 @@ class _BuildLineChartState extends State<BuildLineChart> {
         height: 200.h,
         padding:
         EdgeInsets.only(left: 20.w, right: 40.w, top: 16.h, bottom: 16.h),
-        child: LineChart(
+        child: Obx(() => LineChart(
           LineChartData(
             borderData: FlBorderData(show: false),
             gridData: FlGridData(show: false),
@@ -85,42 +85,46 @@ class _BuildLineChartState extends State<BuildLineChart> {
               ),
             ),
             lineBarsData: [
-              // Expenses Line (Red)
-              (controller.isExpense.value)
-                  ? LineChartBarData(
-                spots: controller.expensesByDay.take(controller.count.value).map((e) {
-                  int totalExpense = e.totalExpense;
-                  return FlSpot(
-                      controller.expensesByDay.indexOf(e).toDouble(),
-                      totalExpense.toDouble());
-                }).toList(),
-                isCurved: false,
-                color: Colors.red,
-                barWidth: 3,
-                isStrokeCapRound: true,
-                belowBarData: BarAreaData(
-                    show: true, color: Colors.red.withValues(alpha: 0.3)),
-              )
-                  :
-
-              // Income Line (Green)
-              LineChartBarData(
-                spots: controller.incomeByDay.take(controller.count.value).map((e) {
-                  int totalIncome = e.totalIncome;
-                  return FlSpot(
-                      controller.incomeByDay.indexOf(e).toDouble(),
-                      totalIncome.toDouble());
-                }).toList(),
-                isCurved: false,
-                color: Colors.green,
-                barWidth: 3,
-                isStrokeCapRound: true,
-                belowBarData: BarAreaData(
-                    show: true,
-                    color: Colors.green.withValues(alpha: 0.3)),
-              ),
+              (controller.isExpense.value && controller.timeChart.value == TimeChart.day)
+                  ? lineChartExpenseDay
+                  : lineChartIncomeDay,
             ],
           ),
-        ));
+        )));
   }
+
+  // Expenses Line (Red)
+  LineChartBarData get lineChartExpenseDay => LineChartBarData(
+    spots: controller.expensesByDay.take(controller.count.value).map((e) {
+      int totalExpense = e.totalExpense;
+      return FlSpot(
+          controller.expensesByDay.indexOf(e).toDouble(),
+          totalExpense.toDouble());
+    }).toList(),
+    isCurved: false,
+    color: Colors.red,
+    barWidth: 3,
+    isStrokeCapRound: true,
+    belowBarData: BarAreaData(
+        show: true, color: Colors.red.withValues(alpha: 0.3)),
+  );
+
+  // Income Line (Green)
+  LineChartBarData get lineChartIncomeDay => LineChartBarData(
+    spots: controller.incomeByDay.take(controller.count.value).map((e) {
+      int totalIncome = e.totalIncome;
+      return FlSpot(
+          controller.incomeByDay.indexOf(e).toDouble(),
+          totalIncome.toDouble());
+    }).toList(),
+    isCurved: false,
+    color: Colors.green,
+    barWidth: 3,
+    isStrokeCapRound: true,
+    belowBarData: BarAreaData(
+        show: true,
+        color: Colors.green.withValues(alpha: 0.3)),
+  );
+
+
 }

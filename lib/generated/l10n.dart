@@ -160,24 +160,29 @@ class S {
     return Intl.message('Ordered by', name: 'ordered_by', desc: '', args: []);
   }
 
-  /// `Total expense:`
+  /// `Total expense :`
   String get total_expense {
     return Intl.message(
-      'Total expense:',
+      'Total expense :',
       name: 'total_expense',
       desc: '',
       args: [],
     );
   }
 
-  /// `Total income:`
+  /// `Total income :`
   String get total_income {
     return Intl.message(
-      'Total income:',
+      'Total income :',
       name: 'total_income',
       desc: '',
       args: [],
     );
+  }
+
+  /// `Time :`
+  String get time {
+    return Intl.message('Time :', name: 'time', desc: '', args: []);
   }
 
   /// `Remaining`
@@ -208,6 +213,16 @@ class S {
   /// `Settings`
   String get setting {
     return Intl.message('Settings', name: 'setting', desc: '', args: []);
+  }
+
+  /// `Time to check transaction (Month)`
+  String get Time_check_transaction {
+    return Intl.message(
+      'Time to check transaction (Month)',
+      name: 'Time_check_transaction',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Version`

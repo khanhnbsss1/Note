@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:note/config/app_config.dart';
 import 'package:note/pages/history_transaction/model/transaction.dart';
 import 'package:note/pages/history_transaction/widget/pie_chart.dart';
+import 'package:note/pages/profile/controller/profile_controller.dart';
 import 'package:note/style/styles.dart';
 import 'package:note/util/date_utils.dart';
 import 'package:note/util/string_format.dart';
@@ -23,7 +24,7 @@ class HistoryTransactionPage extends StatefulWidget {
 class _HistoryTransactionPageState extends State<HistoryTransactionPage>
     with TickerProviderStateMixin {
   late TabController tabController;
-  HistoryTransactionController controller = Get.find();
+  final controller = Get.find<HistoryTransactionController>();
   double smallestPercentToShowOnChart = 0.1;
 
   @override
@@ -38,26 +39,30 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
       child:  Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          buildFunctionBar(),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12.w),
-            child: Obx(
-                  () => (controller.isLineChart.value)
-                  ? BuildLineChart()
-                  : BuildPieChart(),
-            ),
+          buildChooseMonth(),
+          SizedBox(
+            height: 8.h,
           ),
           Obx(
                 () => Padding(
               padding: EdgeInsets.symmetric(horizontal: 12.w),
               child: Text(
                   (controller.isExpense.value)
-                      ? '${S.current.total_expense} : ${StringFormatter.formatNumber(controller.getTotalExpenseForMonth(DateTime.now()))} VND'
-                      : '${S.current.total_income} : ${StringFormatter.formatNumber(controller.getTotalIncomeForMonth(DateTime.now()))} VND',
+                      ? '${S.current.total_expense} ${StringFormatter.formatNumber(controller.getTotalExpenseForMonth(controller.timeMilestone.value))} VND'
+                      : '${S.current.total_income} ${StringFormatter.formatNumber(controller.getTotalIncomeForMonth(controller.timeMilestone.value))} VND',
                   style: AppTextStyle.heading5.copyWith(
                       color: controller.isExpense.value
                           ? AppColor().accentPink
                           : AppColor().accentGreen)),
+            ),
+          ),
+          buildFunctionBar(),
+          Obx(
+            () => Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              child: (controller.isLineChart.value)
+                  ? BuildLineChart()
+                  : BuildPieChart(),
             ),
           ),
           Flexible(
@@ -67,11 +72,89 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
                 children: [
                   // expenseTab(),
                   // incomeTab(),
-                  detailTab(controller.expensesByDay),
-                  detailTab(controller.incomeByDay),
+                  Obx(
+                    () => detailTab(controller.expensesByDay),
+                  ),
+                  Obx(
+                    () => detailTab(controller.incomeByDay),
+                  )
                 ]),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget buildChooseMonth() {
+    final settingController = Get.find<ProfileController>();
+    final DateTime now = DateTime.now();
+
+    DateTime getMonth(int monthsAgo) {
+      final int tempYear = now.year - (monthsAgo ~/ 12);
+      final int tempMonth = now.month - (monthsAgo % 12);
+      final int newMonth = tempMonth <= 0 ? 12 + tempMonth : tempMonth;
+      final int newYear =
+          (tempYear <= 0 || tempMonth <= 0) ? tempYear - 1 : tempYear;
+      return DateTime(newYear, newMonth, 1);
+    }
+
+    return Padding(
+      padding: EdgeInsets.only(top: 8.h, left: 12.w),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(S.current.time, style: AppTextStyle.heading5.copyWith(
+            color: AppColor().primary,
+          ),),
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(children: List.generate(settingController.monthTime.value, (index) {
+                final DateTime month = getMonth(index);
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 4.w),
+                  child: Obx(() {
+                    final bool isSelected =
+                        controller.timeMilestone.value.year == month.year &&
+                            controller.timeMilestone.value.month == month.month;
+                    return GestureDetector(
+                      onTap: () => controller.changeMonth(month),
+                      child: Container(
+                        width: 100.w,
+                        height: 30.h,
+                        padding:
+                        EdgeInsets.symmetric(vertical: 4.h, horizontal: 16.w),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? AppColor().primary.withValues(alpha: 0.2)
+                              : Colors.transparent,
+                          border: Border.all(
+                            color: isSelected ? AppColor().primary : Colors.grey,
+                            width: 1.5,
+                          ),
+                          borderRadius: BorderRadius.circular(20.r),
+                        ),
+                        child: Center(
+                          child: Text(
+                            DateUtilsFormat.toDateTimeString(
+                              month,
+                              format: AppConfigs.monthYearDisplay,
+                            ),
+                            style: AppTextStyle.commonText.copyWith(
+                              color: isSelected
+                                  ? AppColor().primary
+                                  : AppColor().textColor,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                );
+              },)),
+            ),
+          ),
+        ]
       ),
     );
   }
@@ -108,54 +191,54 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
               ),
               color: AppColor().iconColor,
             ),
-            DropdownMenu<TimeChart>(
-              initialSelection: controller.timeChart.value,
-              trailingIcon: Icon(
-                Icons.arrow_drop_down,
-                color: AppColor().textColor,
-              ),
-              selectedTrailingIcon: Icon(
-                Icons.arrow_drop_up,
-                color: AppColor().textColor,
-              ),
-              dropdownMenuEntries: TimeChart.values
-                  .map(
-                    (e) =>
-                        DropdownMenuEntry<TimeChart>(
-                      value: e,
-                      label: e.label,
-                      labelWidget: Text(
-                        e.label,
-                        style: AppTextStyle.commonText.copyWith(
-                          color: AppColor().textColor,
-                        ),
-                      ),
-                    ),
-                  )
-                  .toList(),
-              menuStyle: MenuStyle(
-                backgroundColor: WidgetStatePropertyAll(
-                    Theme.of(context).scaffoldBackgroundColor),
-              ),
-              onSelected: (value) {
-                if (value != null) {
-                  controller.changeTimeChart(value);
-                }
-              },
-              label: Text(
-                S.current.ordered_by,
-                style: AppTextStyle.heading5.copyWith(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 16,
-                  color: AppColor().textColor,
-                ),
-              ),
-              textStyle: AppTextStyle.heading5.copyWith(
-                fontWeight: FontWeight.w400,
-                fontSize: 16,
-                color: AppColor().textColor,
-              ),
-            ),
+            // DropdownMenu<TimeChart>(
+            //   initialSelection: controller.timeChart.value,
+            //   trailingIcon: Icon(
+            //     Icons.arrow_drop_down,
+            //     color: AppColor().textColor,
+            //   ),
+            //   selectedTrailingIcon: Icon(
+            //     Icons.arrow_drop_up,
+            //     color: AppColor().textColor,
+            //   ),
+            //   dropdownMenuEntries: TimeChart.values
+            //       .map(
+            //         (e) =>
+            //             DropdownMenuEntry<TimeChart>(
+            //           value: e,
+            //           label: e.label,
+            //           labelWidget: Text(
+            //             e.label,
+            //             style: AppTextStyle.commonText.copyWith(
+            //               color: AppColor().textColor,
+            //             ),
+            //           ),
+            //         ),
+            //       )
+            //       .toList(),
+            //   menuStyle: MenuStyle(
+            //     backgroundColor: WidgetStatePropertyAll(
+            //         Theme.of(context).scaffoldBackgroundColor),
+            //   ),
+            //   onSelected: (value) {
+            //     if (value != null) {
+            //       controller.changeTimeChart(value);
+            //     }
+            //   },
+            //   label: Text(
+            //     S.current.ordered_by,
+            //     style: AppTextStyle.heading5.copyWith(
+            //       fontWeight: FontWeight.w400,
+            //       fontSize: 16,
+            //       color: AppColor().textColor,
+            //     ),
+            //   ),
+            //   textStyle: AppTextStyle.heading5.copyWith(
+            //     fontWeight: FontWeight.w400,
+            //     fontSize: 16,
+            //     color: AppColor().textColor,
+            //   ),
+            // ),
             SizedBox(
               width: 12.w,
             )
@@ -198,7 +281,7 @@ class _HistoryTransactionPageState extends State<HistoryTransactionPage>
           height: 0.h,
         );
       },
-      itemCount: controller.expensesByDay.length,
+      itemCount: list.length,
     );
   }
 
