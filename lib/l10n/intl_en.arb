@@ -19,7 +19,7 @@
   "time": "Time :",
   "remain": "Remaining",
   "all_notes": "All notes",
-  "done": "Done",
+  "finish": "Finished",
   "language": "Language",
   "night_mode": "Night mode",
   "setting": "Settings",
@@ -39,5 +39,12 @@
   "incomeType_salary": "Salary",
   "incomeType_extra": "Bonus",
   "incomeType_invest": "Investment",
-  "incomeType_other": "Other Income"
+  "incomeType_other": "Other Income",
+  "done": "Done",
+  "not_done": "Not done",
+  "overdue": "Overdue",
+  "not_overdue": "Not overdue",
+  "desc": "Descending",
+  "asc": "Ascending",
+  "all": "All"
 }

@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:workmanager/workmanager.dart';
 
+import '../../../generated/l10n.dart';
 import '../../../model/list_note.dart';
 import '../../../service/background_service/work_manager.dart';
 import '../../../service/local_database/shared_pref.dart';
@@ -109,18 +110,47 @@ class ListNotesController extends GetxController {
         val?.list = val.list?.where((e) => e.time!.isAfter(DateTime.now())).toList();
       });
     }
+    if (listType.value == TypeList.desc) {
+      shownNotes.update((val) {
+        val?.list = val.list
+          ?..sort((a, b) => a.time!.compareTo(b.time!));
+      });
+    }
+    if (listType.value == TypeList.asc) {
+      shownNotes.update((val) {
+        val?.list = val.list
+          ?..sort((a, b) => b.time!.compareTo(a.time!));
+      });
+    }
   }
 
 }
 
 enum TypeList {
-  done('Done'),
-  notDone('Not done'),
-  overdue('Overdue'),
-  notOverdue('Not overdue'),
-  all('All');
+  done,
+  notDone,
+  overdue,
+  notOverdue,
+  desc,
+  asc,
+  all;
 
-  final String? label;
-
-  const TypeList(this.label);
+  String get label {
+    switch (this) {
+      case TypeList.done:
+        return S.current.done;
+      case TypeList.notDone:
+        return S.current.not_done;
+      case TypeList.overdue:
+        return S.current.overdue;
+      case TypeList.notOverdue:
+        return S.current.not_overdue;
+      case TypeList.desc:
+        return S.current.desc;
+      case TypeList.asc:
+        return S.current.asc;
+      case TypeList.all:
+        return S.current.all;
+    }
+  }
 }

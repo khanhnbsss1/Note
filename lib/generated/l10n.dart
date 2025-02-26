@@ -195,9 +195,9 @@ class S {
     return Intl.message('All notes', name: 'all_notes', desc: '', args: []);
   }
 
-  /// `Done`
-  String get done {
-    return Intl.message('Done', name: 'done', desc: '', args: []);
+  /// `Finished`
+  String get finish {
+    return Intl.message('Finished', name: 'finish', desc: '', args: []);
   }
 
   /// `Language`
@@ -363,6 +363,41 @@ class S {
       desc: '',
       args: [],
     );
+  }
+
+  /// `Done`
+  String get done {
+    return Intl.message('Done', name: 'done', desc: '', args: []);
+  }
+
+  /// `Not done`
+  String get not_done {
+    return Intl.message('Not done', name: 'not_done', desc: '', args: []);
+  }
+
+  /// `Overdue`
+  String get overdue {
+    return Intl.message('Overdue', name: 'overdue', desc: '', args: []);
+  }
+
+  /// `Not overdue`
+  String get not_overdue {
+    return Intl.message('Not overdue', name: 'not_overdue', desc: '', args: []);
+  }
+
+  /// `Descending`
+  String get desc {
+    return Intl.message('Descending', name: 'desc', desc: '', args: []);
+  }
+
+  /// `Ascending`
+  String get asc {
+    return Intl.message('Ascending', name: 'asc', desc: '', args: []);
+  }
+
+  /// `All`
+  String get all {
+    return Intl.message('All', name: 'all', desc: '', args: []);
   }
 }
 

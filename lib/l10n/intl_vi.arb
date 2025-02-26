@@ -19,7 +19,7 @@
   "time": "Thời gian :",
   "remain": "Còn lại",
   "all_notes": "Tất cả ghi chú",
-  "done": "Xong",
+  "finish": "Xong",
   "language": "Ngôn ngữ",
   "night_mode": "Chế độ ban đêm",
   "setting": "Cài đặt",
@@ -39,5 +39,12 @@
   "incomeType_salary": "Tiền lương",
   "incomeType_extra": "Tiền thưởng",
   "incomeType_invest": "Tiền đầu tư",
-  "incomeType_other": "Tiền khác"
+  "incomeType_other": "Tiền khác",
+  "done": "Hoàn thành",
+  "notDone": "Chưa hoàn thành",
+  "overdue": "Quá hạn",
+  "notOverdue": "Chưa quá hạn",
+  "desc": "Giảm dần",
+  "asc": "Tăng dần",
+  "all": "Tất cả"
 }

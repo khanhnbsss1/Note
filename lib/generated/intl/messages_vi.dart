@@ -25,10 +25,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "Time_check_transaction": MessageLookupByLibrary.simpleMessage(
       "Thời gian xem thu chi (Tháng)",
     ),
+    "all": MessageLookupByLibrary.simpleMessage("Tất cả"),
     "all_notes": MessageLookupByLibrary.simpleMessage("Tất cả ghi chú"),
+    "asc": MessageLookupByLibrary.simpleMessage("Tăng dần"),
     "content": MessageLookupByLibrary.simpleMessage("Nội dung"),
     "date": MessageLookupByLibrary.simpleMessage("Ngày"),
-    "done": MessageLookupByLibrary.simpleMessage("Xong"),
+    "desc": MessageLookupByLibrary.simpleMessage("Giảm dần"),
+    "done": MessageLookupByLibrary.simpleMessage("Hoàn thành"),
     "edit": MessageLookupByLibrary.simpleMessage("Chỉnh sửa"),
     "enter_amount": MessageLookupByLibrary.simpleMessage("Nhập số tiền"),
     "enter_amount_warning": MessageLookupByLibrary.simpleMessage(
@@ -59,6 +62,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "expenseType_healthCare": MessageLookupByLibrary.simpleMessage("Y tế"),
     "expenseType_move": MessageLookupByLibrary.simpleMessage("Di chuyển"),
     "expenseType_pet": MessageLookupByLibrary.simpleMessage("Thú cưng"),
+    "finish": MessageLookupByLibrary.simpleMessage("Xong"),
     "income": MessageLookupByLibrary.simpleMessage("Thu nhập"),
     "incomeType_extra": MessageLookupByLibrary.simpleMessage("Tiền thưởng"),
     "incomeType_invest": MessageLookupByLibrary.simpleMessage("Tiền đầu tư"),
@@ -68,6 +72,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "night_mode": MessageLookupByLibrary.simpleMessage("Chế độ ban đêm"),
     "no_event": MessageLookupByLibrary.simpleMessage("Không có sự kiện"),
     "ordered_by": MessageLookupByLibrary.simpleMessage("Sắp xếp theo"),
+    "overdue": MessageLookupByLibrary.simpleMessage("Quá hạn"),
     "pick_your_date": MessageLookupByLibrary.simpleMessage("Chọn ngày của bạn"),
     "please_enter_amount": MessageLookupByLibrary.simpleMessage(
       "Vui lòng điền số tiền",
